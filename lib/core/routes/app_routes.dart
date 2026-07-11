@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/island_checkpoint_model.dart';
+import '../../models/learning_mode_type.dart';
 import '../../screens/about/about_oseana_screen.dart';
 import '../../screens/faq/faq_screen.dart';
 import '../../screens/home/home_screen.dart';
@@ -12,6 +13,14 @@ import '../../screens/profile/edit_profile_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/qr_scan/qr_scan_screen.dart';
 import '../../screens/settings/settings_screen.dart';
+
+class MapRouteArgs {
+  final LearningModeType learningMode;
+
+  const MapRouteArgs({
+    this.learningMode = LearningModeType.explore,
+  });
+}
 
 class SeaPassportRouteArgs {
   final IslandCheckpointModel? checkpoint;
@@ -71,10 +80,7 @@ class AppRoutes {
         );
 
       case map:
-        return _buildRoute(
-          settings,
-          const MapScreen(),
-        );
+        return _buildMapRoute(settings);
 
       case passport:
         return _buildSeaPassportRoute(settings);
@@ -124,6 +130,23 @@ class AppRoutes {
           const HomeScreen(),
         );
     }
+  }
+
+  static Route<dynamic> _buildMapRoute(RouteSettings settings) {
+    final args = settings.arguments;
+
+    LearningModeType learningMode = LearningModeType.explore;
+
+    if (args is MapRouteArgs) {
+      learningMode = args.learningMode;
+    }
+
+    return _buildRoute(
+      settings,
+      MapScreen(
+        learningMode: learningMode,
+      ),
+    );
   }
 
   static Route<dynamic> _buildSeaPassportRoute(RouteSettings settings) {

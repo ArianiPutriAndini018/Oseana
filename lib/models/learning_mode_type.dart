@@ -1,0 +1,4 @@
+enum LearningModeType {
+  explore,
+  aquarium,
+}

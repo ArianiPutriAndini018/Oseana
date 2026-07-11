@@ -5,56 +5,31 @@ import '../../core/constants/app_images.dart';
 import '../../core/constants/app_radius.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/constants/app_text_styles.dart';
-import '../../core/utils/app_snack_bar.dart';
-import '../../core/utils/home_bottom_nav_action.dart';
-import '../../data/checkpoint_data.dart';
-import '../../data/island_data.dart';
-import '../../models/island_checkpoint_model.dart';
-import '../../models/island_model.dart';
-import '../../screens/qr_scan/qr_scan_screen.dart';
+import '../../core/routes/app_routes.dart';
+import '../../models/learning_mode_type.dart';
 import '../../widgets/text/stroke_text.dart';
 import 'learning_mode_card.dart';
 
 class LearningModeSection extends StatelessWidget {
   const LearningModeSection({super.key});
 
-  static const int _currentBottomNavIndex = 0;
-
-  IslandCheckpointModel? _findCurrentCheckpoint() {
-  for (final checkpoint in CheckpointData.checkpoints) {
-    return checkpoint;
-  }
-
-  return null;
-  }
-
   void _openAquariumMode(BuildContext context) {
-    final checkpoint = _findCurrentCheckpoint();
-
-    if (checkpoint == null) {
-      AppSnackBar.show(
-        context,
-        'Checkpoint belum tersedia',
-        backgroundColor: AppColors.warning,
-      );
-      return;
-    }
-
-    Navigator.push(
+    Navigator.pushNamed(
       context,
-      MaterialPageRoute(
-        builder: (_) => QrScanScreen(
-          checkpoint: checkpoint,
-        ),
+      AppRoutes.map,
+      arguments: const MapRouteArgs(
+        learningMode: LearningModeType.aquarium,
       ),
     );
   }
 
   void _openExploreMode(BuildContext context) {
-    HomeBottomNavAction.handle(
-      context: context,
-      index: 1,
-      currentIndex: _currentBottomNavIndex,
+    Navigator.pushNamed(
+      context,
+      AppRoutes.map,
+      arguments: const MapRouteArgs(
+        learningMode: LearningModeType.explore,
+      ),
     );
   }
 

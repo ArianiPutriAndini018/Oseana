@@ -6,6 +6,7 @@ import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
 import '../../models/island_checkpoint_model.dart';
 import '../../models/island_model.dart';
+import '../../models/learning_mode_type.dart';
 import '../../widgets/checkpoint/island_checkpoint_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
@@ -14,21 +15,26 @@ import '../qr_scan/qr_scan_screen.dart';
 
 class IslandCheckpointScreen extends StatefulWidget {
   final IslandModel island;
+  final LearningModeType learningMode;
 
   const IslandCheckpointScreen({
     super.key,
     required this.island,
+    this.learningMode = LearningModeType.explore,
   });
 
   @override
-  State<IslandCheckpointScreen> createState() =>
-      _IslandCheckpointScreenState();
+  State<IslandCheckpointScreen> createState() => _IslandCheckpointScreenState();
 }
 
 class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
   static const int _currentIndex = 1;
 
   late final TextEditingController _manualCodeController;
+
+  bool get _isAquariumMode {
+    return widget.learningMode == LearningModeType.aquarium;
+  }
 
   IslandCheckpointModel get _checkpoint {
     return CheckpointData.getCheckpointByIslandId(
@@ -46,8 +52,18 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
   @override
   void dispose() {
     _manualCodeController.dispose();
-
     super.dispose();
+  }
+
+  void _onLearnPressed() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => IslandDetailScreen(
+          checkpoint: _checkpoint,
+        ),
+      ),
+    );
   }
 
   void _onScanQrPressed() {
@@ -126,13 +142,13 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
         children: [
           IslandCheckpointContent(
             checkpoint: _checkpoint,
+            isAquariumMode: _isAquariumMode,
             manualCodeController: _manualCodeController,
+            onLearnPressed: _onLearnPressed,
             onScanQrPressed: _onScanQrPressed,
             onManualCodeSubmitted: _handleManualCodeSubmit,
           ),
-
           const ScreenBackButton(),
-
           FloatingHomeBottomNav(
             currentIndex: _currentIndex,
             onTap: _onBottomNavTap,

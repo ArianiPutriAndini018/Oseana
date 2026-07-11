@@ -12,14 +12,18 @@ import 'checkpoint_progress_card.dart';
 
 class IslandCheckpointContent extends StatelessWidget {
   final IslandCheckpointModel checkpoint;
+  final bool isAquariumMode;
   final TextEditingController manualCodeController;
+  final VoidCallback onLearnPressed;
   final VoidCallback onScanQrPressed;
   final ValueChanged<String> onManualCodeSubmitted;
 
   const IslandCheckpointContent({
     super.key,
     required this.checkpoint,
+    required this.isAquariumMode,
     required this.manualCodeController,
+    required this.onLearnPressed,
     required this.onScanQrPressed,
     required this.onManualCodeSubmitted,
   });
@@ -67,18 +71,26 @@ class IslandCheckpointContent extends StatelessWidget {
               title: checkpoint.biotaSectionTitle,
             ),
             const SizedBox(height: 26),
-            PrimaryButton(
-              text: checkpoint.scanButtonText,
-              icon: Icons.qr_code_scanner_rounded,
-              onPressed: onScanQrPressed,
-            ),
-            const SizedBox(height: 28),
-            CheckpointManualCodeInput(
-              controller: manualCodeController,
-              label: checkpoint.manualInputLabel,
-              hintText: checkpoint.manualCodeHint,
-              onSubmitted: onManualCodeSubmitted,
-            ),
+            if (isAquariumMode) ...[
+              PrimaryButton(
+                text: checkpoint.scanButtonText,
+                icon: Icons.qr_code_scanner_rounded,
+                onPressed: onScanQrPressed,
+              ),
+              const SizedBox(height: 28),
+              CheckpointManualCodeInput(
+                controller: manualCodeController,
+                label: checkpoint.manualInputLabel,
+                hintText: checkpoint.manualCodeHint,
+                onSubmitted: onManualCodeSubmitted,
+              ),
+            ] else ...[
+              PrimaryButton(
+                text: 'Pelajari',
+                icon: Icons.menu_book_rounded,
+                onPressed: onLearnPressed,
+              ),
+            ],
             const SizedBox(height: 18),
             InfoCard(
               text: checkpoint.infoText,

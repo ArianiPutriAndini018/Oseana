@@ -10,6 +10,7 @@ import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
 import '../../data/island_data.dart';
 import '../../models/island_model.dart';
+import '../../models/learning_mode_type.dart';
 import '../../widgets/map/map_background.dart';
 import '../../widgets/map/map_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
@@ -17,7 +18,12 @@ import '../../widgets/navigation/screen_back_button.dart';
 import '../checkpoint/island_checkpoint_screen.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final LearningModeType learningMode;
+
+  const MapScreen({
+    super.key,
+    this.learningMode = LearningModeType.explore,
+  });
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -100,6 +106,7 @@ class _MapScreenState extends State<MapScreen> {
       MaterialPageRoute(
         builder: (_) => IslandCheckpointScreen(
           island: island,
+          learningMode: widget.learningMode,
         ),
       ),
     );
