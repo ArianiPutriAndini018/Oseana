@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_images.dart';
-import '../../core/constants/app_radius.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/routes/app_routes.dart';
@@ -38,91 +37,67 @@ class LearningModeSection extends StatelessWidget {
     final width = MediaQuery.sizeOf(context).width;
     final isSmall = width < 380;
 
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        bottom: isSmall ? 18 : 24,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.radiusXXL,
-        border: Border.all(
-          color: AppColors.primary,
-          width: 3,
-        ),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+    return Column(
+      children: [
+        IntrinsicWidth(
+          child: Container(
+            padding: const EdgeInsets.only(bottom: 4),
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(
                   color: AppColors.primary,
-                  width: 3,
+                  width: 1.5,
                 ),
               ),
             ),
             child: StrokeText(
               text: 'Pilih Mode Belajar',
-              fontSize: isSmall ? 12 : 14,
+              fontSize: isSmall ? 16 : 18,
               style: AppTextStyles.sectionTitle,
               fillColor: AppColors.white,
               strokeColor: AppColors.primary,
-              strokeWidth: 3,
+              strokeWidth: 4,
               letterSpacing: 0.3,
               shadows: const [],
             ),
           ),
-          AppSpacing.h16,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: Text(
-              'Pilih cara belajar dan scan QR di lokasi\n'
-              'atau jelajahi pulau secara mandiri',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.bodyLarge.copyWith(
-                fontSize: isSmall ? 8 : 10,
-                color: AppColors.secondary,
-                fontWeight: FontWeight.w700,
-                height: 1.35,
-                letterSpacing: 0.5,
-              ),
+        ),
+        AppSpacing.h12,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: Text(
+            'Pilih cara belajar dan scan QR di lokasi\natau jelajahi pulau secara mandiri',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodyLarge.copyWith(
+              fontSize: isSmall ? 11 : 13,
+              color: AppColors.secondary,
+              fontWeight: FontWeight.w700,
+              height: 1.35,
+              letterSpacing: 0.5,
             ),
           ),
-          AppSpacing.h24,
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: isSmall ? 16 : 24,
-            ),
-            child: LearningModeCard(
-              image: AppImages.qrCode,
-              title: 'Aquarium Mode',
-              description: 'Scan QR di lokasi\nuntuk mulai belajar',
-              buttonText: 'Pilih Aquarium Mode',
-              backgroundColor: AppColors.aquaLight,
-              buttonColor: AppColors.primary,
-              onTap: () => _openAquariumMode(context),
-            ),
-          ),
-          AppSpacing.h24,
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: isSmall ? 16 : 24,
-            ),
-            child: LearningModeCard(
-              image: AppImages.map,
-              title: 'Explore Mode',
-              description: 'Pilih pulau di peta\ndan belajar mandiri',
-              buttonText: 'Pilih Explore Mode',
-              backgroundColor: AppColors.mintLight,
-              buttonColor: AppColors.teal,
-              onTap: () => _openExploreMode(context),
-            ),
-          ),
-        ],
-      ),
+        ),
+        AppSpacing.h24,
+        LearningModeCard(
+          image: AppImages.qrCode,
+          title: 'Aquarium Mode',
+          description: 'Scan QR di lokasi\nuntuk mulai belajar',
+          buttonText: 'Pilih Aquarium Mode',
+          backgroundColor: AppColors.aquaLight,
+          buttonColor: AppColors.primary,
+          onTap: () => _openAquariumMode(context),
+        ),
+        AppSpacing.h24,
+        LearningModeCard(
+          image: AppImages.map,
+          title: 'Explore Mode',
+          description: 'Pilih pulau di peta\ndan belajar mandiri',
+          buttonText: 'Pilih Explore Mode',
+          backgroundColor: AppColors.mintLight,
+          buttonColor: AppColors.teal,
+          onTap: () => _openExploreMode(context),
+        ),
+      ],
     );
   }
 }

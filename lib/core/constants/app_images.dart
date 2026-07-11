@@ -131,4 +131,9 @@ class AppImages {
   static const profileBadgeIcon = 'assets/images/profile/badge.png';
 
   static const profileStampIcon = 'assets/images/profile/stamp.png';
+
+  static const missionSelectiveTrash = 'assets/images/mission/mission_selective_trash.png';
+  static const missionLessTrash = 'assets/images/mission/Mision_less_trash.png';
+  static const missionReuseBag = 'assets/images/mission/mision_reuse_bag.png';
+  static const missionPlasticStraw = 'assets/images/mission/mission_plastic_straw.png';
 }
