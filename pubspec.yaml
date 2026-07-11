@@ -1,0 +1,56 @@
+name: percobaanapk_oseana
+description: "Proyek Flutter Oseana APK yang direkonstruksi dari gambar."
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  google_fonts: ^6.3.0
+  smooth_page_indicator: ^1.2.1
+  flutter_svg: ^2.2.0
+  mobile_scanner: ^7.2.0
+  youtube_player_flutter: ^10.0.1
+  confetti: ^0.8.0
+  audioplayers: ^6.7.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/splash/
+    - assets/images/onboarding/
+    - assets/images/map/
+    - assets/images/map/islands/
+    - assets/images/map/icons/
+    - assets/images/map/stars/
+    - assets/images/quiz/
+    - assets/images/profile/
+    - assets/images/avatar/
+    - assets/images/passport/rewards/
+    - assets/images/mission/
+    - assets/images/checkpoint/
+    - assets/images/biota/ntt/
+    - assets/images/logo.svg
+    - assets/icons/user.svg
+    - assets/icons/lock.svg
+    - assets/icons/eye.svg
+    - assets/icons/eye_off.svg
+    - assets/icons/email.svg
+    - assets/icons/island_detail/
+    - assets/images/home/
+    - assets/audio/
+  fonts:
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka-Bold.ttf
