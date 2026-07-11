@@ -61,6 +61,42 @@ class MissionData {
       isCompleted: false,
       order: 5,
     ),
+    MissionModel(
+      id: 'pilah_sampah',
+      title: 'Pilah Sampah Sederhana',
+      description: 'Pilah sampah dengan benar agar tidak mencemari laut dan merusak ekosistem.',
+      image: AppImages.missionSelectiveTrash,
+      xpReward: 5,
+      isCompleted: true,
+      order: 6,
+    ),
+    MissionModel(
+      id: 'kurangi_sampah',
+      title: 'Kurangi Sampah di Sekitar',
+      description: 'Bersihkan lingkungan sekitar agar sampah tidak terbawa ke laut.',
+      image: AppImages.missionLessTrash,
+      xpReward: 5,
+      isCompleted: true,
+      order: 7,
+    ),
+    MissionModel(
+      id: 'tas_pakai_ulang',
+      title: 'Gunakan Tas Pakai Ulang',
+      description: 'Kurangi penggunaan plastik sekali pakai dengan membawa tas sendiri',
+      image: AppImages.missionReuseBag,
+      xpReward: 5,
+      isCompleted: true,
+      order: 8,
+    ),
+    MissionModel(
+      id: 'tolak_sedotan',
+      title: 'Tolak Sedotan Plastik',
+      description: 'Hindari sedotan plastik untuk mengurangi sampah yang mencemari laut',
+      image: AppImages.missionPlasticStraw,
+      xpReward: 5,
+      isCompleted: true,
+      order: 9,
+    ),
   ];
 
   static List<MissionModel> get orderedMissions {

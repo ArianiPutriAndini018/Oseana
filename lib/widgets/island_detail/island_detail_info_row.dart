@@ -65,9 +65,9 @@ class IslandDetailInfoRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.visible,
                     style: AppTextStyles.bodyLarge.copyWith(
-                      color: AppColors.primary,
+                      color: AppColors.white,
                       fontSize: fontSize,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w600,
                       height: lineHeight,
                       shadows: AppShadows.figmaTextShadow,
                     ),
@@ -81,9 +81,9 @@ class IslandDetailInfoRow extends StatelessWidget {
                     softWrap: true,
                     overflow: TextOverflow.visible,
                     style: AppTextStyles.bodyLarge.copyWith(
-                      color: AppColors.primary,
+                      color: AppColors.white,
                       fontSize: fontSize,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w600,
                       height: lineHeight,
                       shadows: AppShadows.figmaTextShadow,
                     ),
