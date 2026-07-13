@@ -10,6 +10,7 @@ import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
 import '../../data/island_data.dart';
+import '../../data/repositories/checkpoint_repository.dart';
 import '../../data/repositories/passport_repository.dart';
 import '../../data/repositories/quiz_repository.dart';
 import '../../models/island_model.dart';
@@ -55,6 +56,8 @@ class _MapScreenState extends State<MapScreen> {
     final userId = _authService.currentUser?.id;
 
     try {
+      await CheckpointRepository().loadAllCheckpoints();
+
       final stamps = await _passportRepository.getStamps(userId);
       final unlockedIds = stamps
           .where((s) => s.isUnlocked)

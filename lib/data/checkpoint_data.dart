@@ -1,3 +1,4 @@
+import 'repositories/checkpoint_repository.dart';
 import '../core/constants/app_images.dart';
 import '../models/biota_model.dart';
 import '../models/island_checkpoint_model.dart';
@@ -5,9 +6,7 @@ import '../models/island_checkpoint_model.dart';
 class CheckpointData {
   CheckpointData._();
 
-  static List<IslandCheckpointModel> checkpoints = [
-    nttCheckpoint,
-  ];
+  static List<IslandCheckpointModel> get checkpoints => CheckpointRepository.cachedCheckpoints;
 
   static IslandCheckpointModel nttCheckpoint = IslandCheckpointModel(
     id: 'checkpoint_ntt',

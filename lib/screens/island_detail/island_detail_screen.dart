@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
+import '../../data/repositories/checkpoint_repository.dart';
 import '../../models/biota_model.dart';
 import '../../models/island_checkpoint_model.dart';
 import '../../widgets/island_detail/island_detail_content.dart';
@@ -10,7 +11,7 @@ import '../../widgets/navigation/screen_back_button.dart';
 import '../biota_detail/biota_detail_screen.dart';
 import '../quiz/quiz_screen.dart';
 
-class IslandDetailScreen extends StatelessWidget {
+class IslandDetailScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
 
   const IslandDetailScreen({
@@ -18,28 +19,55 @@ class IslandDetailScreen extends StatelessWidget {
     required this.checkpoint,
   });
 
-  static const int _currentIndex = 1;
+  @override
+  State<IslandDetailScreen> createState() => _IslandDetailScreenState();
+}
 
-  void _onBiotaTap(
+class _IslandDetailScreenState extends State<IslandDetailScreen> {
+  static const int _currentIndex = 1;
+  late IslandCheckpointModel _currentCheckpoint;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentCheckpoint = widget.checkpoint;
+  }
+
+  Future<void> _refreshCheckpoint() async {
+    await CheckpointRepository().loadAllCheckpoints();
+    final updated = CheckpointRepository.cachedCheckpoints.firstWhere(
+      (c) => c.id == _currentCheckpoint.id,
+      orElse: () => _currentCheckpoint,
+    );
+    if (mounted) {
+      setState(() {
+        _currentCheckpoint = updated;
+      });
+    }
+  }
+
+  Future<void> _onBiotaTap(
     BuildContext context,
     BiotaModel biota,
-  ) {
-    Navigator.push(
+  ) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => BiotaDetailScreen(
-          checkpoint: checkpoint,
+          checkpoint: _currentCheckpoint,
           biota: biota,
         ),
       ),
     );
+    // Refresh progress after returning
+    _refreshCheckpoint();
   }
 
   void _onQuizPressed(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => QuizScreen(checkpoint: checkpoint),
+        builder: (_) => QuizScreen(checkpoint: _currentCheckpoint),
       ),
     );
   }
@@ -63,7 +91,7 @@ class IslandDetailScreen extends StatelessWidget {
       body: Stack(
         children: [
           IslandDetailContent(
-            checkpoint: checkpoint,
+            checkpoint: _currentCheckpoint,
             onBiotaTap: (biota) {
               _onBiotaTap(
                 context,

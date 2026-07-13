@@ -16,22 +16,56 @@ class UserProfileController extends ChangeNotifier {
   String _userName;
   String _avatar;
 
+  int _xp = ProfileData.xp;
+  int _maxXp = ProfileData.maxXp;
+  String _level = ProfileData.level;
+  String _title = ProfileData.title;
+  List<ProfileStatModel> _topStats = ProfileData.orderedTopStats;
+  List<ProfileStatModel> _bottomStats = ProfileData.orderedBottomStats;
+
   Future<void> _loadStats() async {
     final user = AuthService().currentUser;
     if (user != null) {
-      final learnedBiotas = await BiotaRepository().getLearnedBiotasCount(user.id);
-      
-      final index = ProfileData.topStats.indexWhere((s) => s.id == 'biota_learned');
-      if (index != -1) {
-        final stat = ProfileData.topStats[index];
-        ProfileData.topStats[index] = stat.copyWith(value: '$learnedBiotas/21');
-        notifyListeners();
+      // Load real profile data
+      try {
+        final profile = await ProfileRepository().getProfile(user.id);
+        if (profile != null) {
+          _xp = profile.xp;
+          _maxXp = profile.maxXp;
+          _level = 'Level ${profile.levelNumber}';
+          _title = profile.title;
+          _userName = profile.username;
+          if (profile.avatar.isNotEmpty) _avatar = profile.avatar;
+        }
+      } catch (e) {
+        print('Error loading profile: $e');
       }
+
+      // Load Biotas Count
+      try {
+        final learnedBiotas = await BiotaRepository().getLearnedBiotasCount(user.id);
+        final topIndex = _topStats.indexWhere((s) => s.id == 'biota_learned');
+        if (topIndex != -1) {
+          _topStats[topIndex] = _topStats[topIndex].copyWith(value: '$learnedBiotas/21');
+        }
+      } catch (e) {
+        print('Error loading learned biotas: $e');
+      }
+
+      notifyListeners();
     }
   }
 
   String get userName => _userName;
   String get avatar => _avatar;
+  int get xp => _xp;
+  int get maxXp => _maxXp;
+  String get level => _level;
+  String get title => _title;
+  List<ProfileStatModel> get topStats => _topStats;
+  List<ProfileStatModel> get bottomStats => _bottomStats;
+
+  double get xpProgressValue => _maxXp <= 0 ? 0 : _xp / _maxXp;
 
   void updateProfile({
     required String userName,

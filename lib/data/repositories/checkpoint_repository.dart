@@ -1,87 +1,67 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/island_checkpoint_model.dart';
+import '../checkpoint_data.dart';
 
 class CheckpointRepository {
   final SupabaseClient _client = Supabase.instance.client;
 
-  Future<List<IslandCheckpointModel>> getAllCheckpoints() async {
-    try {
-      final checkpointsData = await _client.from('island_checkpoints').select();
-      final biotasData = await _client.from('biotas').select().order('order_index', ascending: true);
+  static List<IslandCheckpointModel> _cachedCheckpoints = [];
 
-      final List<IslandCheckpointModel> checkpoints = [];
+  static List<IslandCheckpointModel> get cachedCheckpoints => _cachedCheckpoints;
+
+  Future<void> loadAllCheckpoints() async {
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
       
-      final user = _client.auth.currentUser;
+      final checkpointsResponse = await _client.from('island_checkpoints').select();
+      final biotasResponse = await _client.from('biotas').select();
+      
       Set<String> learnedBiotaIds = {};
-      if (user != null) {
-        final progressData = await _client
-            .from('user_biota_progress')
-            .select('biota_id')
-            .eq('user_id', user.id);
-        learnedBiotaIds = progressData.map((e) => e['biota_id'].toString()).toSet();
+      if (userId != null) {
+        try {
+          final progressResponse = await _client
+              .from('user_biota_progress')
+              .select('biota_id')
+              .eq('user_id', userId);
+          for (final row in progressResponse) {
+            learnedBiotaIds.add(row['biota_id'].toString());
+          }
+        } catch (e) {
+          print('Error loading user_biota_progress: $e');
+        }
       }
 
-      for (final checkpointJson in checkpointsData) {
-        final islandId = checkpointJson['island_id']?.toString() ?? '';
-        final relatedBiotas = biotasData.where((b) => b['island_id']?.toString() == islandId).map((b) {
-          final updatedBiota = Map<String, dynamic>.from(b);
-          updatedBiota['is_learned'] = learnedBiotaIds.contains(b['id'].toString());
-          return updatedBiota;
-        }).toList();
+      final List<IslandCheckpointModel> loaded = [];
 
-        final Map<String, dynamic> combinedJson = Map<String, dynamic>.from(checkpointJson);
-        combinedJson['biotas'] = relatedBiotas;
+      for (final json in checkpointsResponse) {
+        final islandId = json['island_id']?.toString().toLowerCase() ?? '';
+        
+        // Filter and sort biotas for this island
+        final islandBiotas = biotasResponse
+            .where((b) => b['island_id']?.toString().toLowerCase() == islandId)
+            .map((b) {
+              final biotaMap = Map<String, dynamic>.from(b);
+              final biotaId = biotaMap['id']?.toString() ?? '';
+              biotaMap['is_learned'] = learnedBiotaIds.contains(biotaId);
+              biotaMap['order'] = biotaMap['order_index'] ?? 0;
+              return biotaMap;
+            })
+            .toList();
 
-        checkpoints.add(IslandCheckpointModel.fromJson(combinedJson));
+        islandBiotas.sort((a, b) => 
+            ((a['order_index'] as int?) ?? 0).compareTo((b['order_index'] as int?) ?? 0)
+        );
+
+        final updatedJson = Map<String, dynamic>.from(json);
+        updatedJson['biotas'] = islandBiotas;
+
+        loaded.add(IslandCheckpointModel.fromJson(updatedJson));
       }
 
-      return checkpoints;
+      _cachedCheckpoints = loaded;
     } catch (e) {
-      throw Exception('Gagal mengambil semua checkpoint: $e');
-    }
-  }
-
-  Future<IslandCheckpointModel?> getCheckpointByIslandId(String islandId) async {
-    try {
-      final checkpointData = await _client
-          .from('island_checkpoints')
-          .select()
-          .eq('island_id', islandId)
-          .maybeSingle();
-
-      if (checkpointData == null) {
-        return null;
-      }
-
-      final biotasData = await _client
-          .from('biotas')
-          .select()
-          .eq('island_id', islandId)
-          .order('order_index', ascending: true);
-
-      final user = _client.auth.currentUser;
-      Set<String> learnedBiotaIds = {};
-      if (user != null) {
-        final progressData = await _client
-            .from('user_biota_progress')
-            .select('biota_id')
-            .eq('user_id', user.id);
-        learnedBiotaIds = progressData.map((e) => e['biota_id'].toString()).toSet();
-      }
-
-      final relatedBiotas = biotasData.map((b) {
-        final updatedBiota = Map<String, dynamic>.from(b);
-        updatedBiota['is_learned'] = learnedBiotaIds.contains(b['id'].toString());
-        return updatedBiota;
-      }).toList();
-
-      final Map<String, dynamic> combinedJson = Map<String, dynamic>.from(checkpointData);
-      combinedJson['biotas'] = relatedBiotas;
-
-      return IslandCheckpointModel.fromJson(combinedJson);
-    } catch (e) {
-      throw Exception('Gagal mengambil checkpoint untuk island $islandId: $e');
+      print('Error loading island_checkpoints: $e');
     }
   }
 }
