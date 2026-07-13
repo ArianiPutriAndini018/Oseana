@@ -91,9 +91,8 @@ class _MissionListScreenState extends State<MissionListScreen> {
                 isSmall ? 18 : 24,
                 150,
               ),
-              child: MissionListSection(
-                missions: MissionData.missions.where((m) => !m.isCompleted).toList(),
-                onMissionComplete: _handleMissionComplete,
+              child: const MissionListSection(
+                missions: MissionData.missions,
               ),
             ),
           ),
