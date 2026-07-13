@@ -212,23 +212,6 @@ Level Berikutnya Terbuka
 
 ---
 
-# Struktur Project
-
-```text
-oseana/
-├── assets/
-├── lib/
-│   ├── models/
-│   ├── pages/
-│   ├── services/
-│   ├── widgets/
-│   └── main.dart
-├── docs/
-├── README.md
-└── pubspec.yaml
-```
-
----
 
 # Kontribusi terhadap SDGs
 
