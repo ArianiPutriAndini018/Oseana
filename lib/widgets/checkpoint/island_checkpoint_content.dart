@@ -84,13 +84,13 @@ class IslandCheckpointContent extends StatelessWidget {
                 hintText: checkpoint.manualCodeHint,
                 onSubmitted: onManualCodeSubmitted,
               ),
-            ] else ...[
-              PrimaryButton(
-                text: 'Pelajari',
-                icon: Icons.menu_book_rounded,
-                onPressed: onLearnPressed,
-              ),
+              const SizedBox(height: 28),
             ],
+            PrimaryButton(
+              text: 'Pelajari',
+              icon: Icons.menu_book_rounded,
+              onPressed: onLearnPressed,
+            ),
             const SizedBox(height: 18),
             InfoCard(
               text: checkpoint.infoText,

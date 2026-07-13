@@ -23,29 +23,44 @@ class SeaPassportRewardItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.network(
-            reward.image,
-            width: isSmall ? 68 : 78,
-            height: isSmall ? 68 : 78,
-            fit: BoxFit.contain,
-            loadingBuilder: (context, child, progress) {
-              if (progress == null) return child;
-              return SizedBox(
-                width: isSmall ? 68 : 78,
-                height: isSmall ? 68 : 78,
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return Icon(
-                Icons.image_not_supported_outlined,
-                size: isSmall ? 68 : 78,
-                color: Colors.grey,
-              );
-            },
-          ),
+          if (reward.image.startsWith('http'))
+            Image.network(
+              reward.image,
+              width: isSmall ? 68 : 78,
+              height: isSmall ? 68 : 78,
+              fit: BoxFit.contain,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return SizedBox(
+                  width: isSmall ? 68 : 78,
+                  height: isSmall ? 68 : 78,
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(
+                  Icons.image_not_supported_outlined,
+                  size: isSmall ? 68 : 78,
+                  color: Colors.grey,
+                );
+              },
+            )
+          else
+            Image.asset(
+              reward.image,
+              width: isSmall ? 68 : 78,
+              height: isSmall ? 68 : 78,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(
+                  Icons.image_not_supported_outlined,
+                  size: isSmall ? 68 : 78,
+                  color: Colors.grey,
+                );
+              },
+            ),
           SizedBox(height: isSmall ? 3 : 4),
           Text(
             reward.title,

@@ -33,9 +33,6 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
   late final TextEditingController _manualCodeController;
 
   bool get _isAquariumMode {
-    if (widget.island.stars == 3) {
-      return false;
-    }
     return widget.learningMode == LearningModeType.aquarium;
   }
 

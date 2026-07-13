@@ -23,6 +23,9 @@ class PassportRepository {
         unlockedIslandIds.addAll(
           userStamps.map((e) => e['island_id']?.toString() ?? ''),
         );
+      } else {
+        // Guest mode default unlocks
+        unlockedIslandIds.add('ntt');
       }
 
       return data.map((json) {

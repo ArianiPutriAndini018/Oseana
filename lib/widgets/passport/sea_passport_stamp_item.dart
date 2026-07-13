@@ -76,31 +76,46 @@ class _UnlockedStamp extends StatelessWidget {
     required this.size,
   });
 
-  @override
   Widget build(BuildContext context) {
-    return Image.network(
-      image,
-      width: size,
-      height: size,
-      fit: BoxFit.contain,
-      loadingBuilder: (context, child, progress) {
-        if (progress == null) return child;
-        return SizedBox(
-          width: size,
-          height: size,
-          child: const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        );
-      },
-      errorBuilder: (context, error, stackTrace) {
-        return Icon(
-          Icons.image_not_supported_outlined,
-          size: size,
-          color: Colors.grey,
-        );
-      },
-    );
+    if (image.startsWith('http')) {
+      return Image.network(
+        image,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return SizedBox(
+            width: size,
+            height: size,
+            child: const Center(
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(
+            Icons.image_not_supported_outlined,
+            size: size,
+            color: Colors.grey,
+          );
+        },
+      );
+    } else {
+      return Image.asset(
+        image,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(
+            Icons.image_not_supported_outlined,
+            size: size,
+            color: Colors.grey,
+          );
+        },
+      );
+    }
   }
 }
 
