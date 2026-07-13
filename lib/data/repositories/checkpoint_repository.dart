@@ -11,10 +11,24 @@ class CheckpointRepository {
       final biotasData = await _client.from('biotas').select().order('order_index', ascending: true);
 
       final List<IslandCheckpointModel> checkpoints = [];
+      
+      final user = _client.auth.currentUser;
+      Set<String> learnedBiotaIds = {};
+      if (user != null) {
+        final progressData = await _client
+            .from('user_biota_progress')
+            .select('biota_id')
+            .eq('user_id', user.id);
+        learnedBiotaIds = progressData.map((e) => e['biota_id'].toString()).toSet();
+      }
 
       for (final checkpointJson in checkpointsData) {
         final islandId = checkpointJson['island_id']?.toString() ?? '';
-        final relatedBiotas = biotasData.where((b) => b['island_id']?.toString() == islandId).toList();
+        final relatedBiotas = biotasData.where((b) => b['island_id']?.toString() == islandId).map((b) {
+          final updatedBiota = Map<String, dynamic>.from(b);
+          updatedBiota['is_learned'] = learnedBiotaIds.contains(b['id'].toString());
+          return updatedBiota;
+        }).toList();
 
         final Map<String, dynamic> combinedJson = Map<String, dynamic>.from(checkpointJson);
         combinedJson['biotas'] = relatedBiotas;
@@ -46,8 +60,24 @@ class CheckpointRepository {
           .eq('island_id', islandId)
           .order('order_index', ascending: true);
 
+      final user = _client.auth.currentUser;
+      Set<String> learnedBiotaIds = {};
+      if (user != null) {
+        final progressData = await _client
+            .from('user_biota_progress')
+            .select('biota_id')
+            .eq('user_id', user.id);
+        learnedBiotaIds = progressData.map((e) => e['biota_id'].toString()).toSet();
+      }
+
+      final relatedBiotas = biotasData.map((b) {
+        final updatedBiota = Map<String, dynamic>.from(b);
+        updatedBiota['is_learned'] = learnedBiotaIds.contains(b['id'].toString());
+        return updatedBiota;
+      }).toList();
+
       final Map<String, dynamic> combinedJson = Map<String, dynamic>.from(checkpointData);
-      combinedJson['biotas'] = biotasData;
+      combinedJson['biotas'] = relatedBiotas;
 
       return IslandCheckpointModel.fromJson(combinedJson);
     } catch (e) {

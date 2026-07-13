@@ -28,7 +28,7 @@ class ProfileData {
     return (xpProgressValue * 100).round();
   }
 
-  static const List<ProfileStatModel> topStats = [
+  static List<ProfileStatModel> topStats = [
     ProfileStatModel(
       id: 'islands_learned',
       title: 'Pulau Dipelajari',

@@ -30,7 +30,14 @@ class ProfileRepository {
           .eq('id', userId)
           .maybeSingle();
       
-      if (currentProfileData == null) return null;
+      if (currentProfileData == null) {
+        // Create profile if missing
+        await _client.from('profiles').insert({
+          'id': userId,
+          'xp': xpToAdd,
+        });
+        return await getProfile(userId);
+      }
       
       int currentXp = currentProfileData['xp'] is int 
           ? currentProfileData['xp'] as int 
@@ -43,7 +50,9 @@ class ProfileRepository {
           .select()
           .maybeSingle();
 
-      if (data == null) return null;
+      if (data == null) {
+        throw Exception('Gagal update XP: Policy UPDATE/SELECT mungkin belum benar.');
+      }
 
       return UserProfileModel.fromJson(data);
     } catch (e) {

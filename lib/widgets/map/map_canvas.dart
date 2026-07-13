@@ -55,7 +55,7 @@ class MapCanvas extends StatelessWidget {
                   onTap: onIslandTap,
                 ),
               for (final island in islands)
-                if (island.stars > 0)
+                if (island.status != IslandStatus.locked)
                   MapStars(
                     island: island,
                     canvasWidth: width,

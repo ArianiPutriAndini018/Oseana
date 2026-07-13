@@ -8,6 +8,8 @@ import '../../models/island_checkpoint_model.dart';
 import '../../widgets/biota_detail/biota_detail_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
+import '../../core/services/auth_service.dart';
+import '../../data/repositories/biota_repository.dart';
 import '../biota_video/biota_video_screen.dart';
 
 class BiotaDetailScreen extends StatefulWidget {
@@ -28,6 +30,19 @@ class _BiotaDetailScreenState extends State<BiotaDetailScreen> {
   static const int _currentIndex = 1;
 
   BiotaContentType _selectedType = BiotaContentType.summary;
+
+  @override
+  void initState() {
+    super.initState();
+    _markBiotaAsLearned();
+  }
+
+  Future<void> _markBiotaAsLearned() async {
+    final user = AuthService().currentUser;
+    if (user != null) {
+      await BiotaRepository().markBiotaAsLearned(user.id, widget.biota.id);
+    }
+  }
 
   void _onTypeChanged(BiotaContentType type) {
     setState(() {

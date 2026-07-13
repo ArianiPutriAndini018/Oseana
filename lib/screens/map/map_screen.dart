@@ -11,6 +11,7 @@ import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
 import '../../data/island_data.dart';
 import '../../data/repositories/passport_repository.dart';
+import '../../data/repositories/quiz_repository.dart';
 import '../../models/island_model.dart';
 import '../../models/learning_mode_type.dart';
 import '../../widgets/map/map_background.dart';
@@ -60,6 +61,11 @@ class _MapScreenState extends State<MapScreen> {
           .map((s) => s.id)
           .toSet();
 
+      Map<String, int> userStars = {};
+      if (userId != null) {
+        userStars = await QuizRepository().getUserStars(userId);
+      }
+
       final updated = <IslandModel>[];
       var currentAssigned = false;
 
@@ -69,11 +75,11 @@ class _MapScreenState extends State<MapScreen> {
 
         if (unlockedIds.contains(island.id)) {
           status = IslandStatus.completed;
-          stars = 3;
+          stars = userStars[island.id] ?? 0;
         } else if (!currentAssigned) {
           status = IslandStatus.current;
           currentAssigned = true;
-          stars = 0;
+          stars = userStars[island.id] ?? 0;
         } else {
           status = IslandStatus.locked;
           stars = 0;

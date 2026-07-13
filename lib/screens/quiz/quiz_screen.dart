@@ -9,7 +9,9 @@ import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
 import '../../data/quiz_data.dart';
+import '../../data/repositories/quiz_repository.dart';
 import '../../data/sea_passport_data.dart';
+import '../../core/services/auth_service.dart';
 import '../../models/island_checkpoint_model.dart';
 import '../../models/quiz_question_model.dart';
 import '../../widgets/backgrounds/animated_splash_background.dart';
@@ -120,7 +122,7 @@ class _QuizScreenState extends State<QuizScreen> {
     });
   }
 
-  void _finishQuiz() {
+  Future<void> _finishQuiz() async {
     if (_isFinishing) return;
 
     setState(() {
@@ -137,10 +139,51 @@ class _QuizScreenState extends State<QuizScreen> {
       );
     }
 
+    // Update local UI states
     CheckpointData.updateProgress(widget.checkpoint.islandId, 1.0);
     SeaPassportData.unlockStamp(widget.checkpoint.islandId);
 
+    // Save result to database
+    final user = AuthService().currentUser;
+    if (user != null) {
+      final totalCount = _questions.length;
+      final scorePercentage = totalCount > 0 ? (_score / totalCount * 100).toInt() : 0;
+      
+      int stars = 0;
+      if (_score == totalCount) {
+        stars = 3;
+      } else if (_score >= (totalCount / 2)) {
+        stars = 2;
+      } else if (_score > 0) {
+        stars = 1;
+      }
+
+      try {
+        await QuizRepository().saveQuizResult(
+          userId: user.id,
+          islandId: widget.checkpoint.islandId,
+          score: scorePercentage,
+          correctAnswers: _score,
+          stars: stars,
+          xpEarned: 15,
+        );
+      } catch (e) {
+        if (!mounted) return;
+        AppSnackBar.show(
+          context,
+          'Error DB: ${e.toString().replaceAll('Exception: ', '')}',
+          backgroundColor: AppColors.error,
+        );
+        setState(() {
+          _isFinishing = false;
+        });
+        return; // Hentikan navigasi ke result screen jika gagal simpan
+      }
+    }
+
     final updatedCheckpoint = CheckpointData.getCheckpointByIslandId(widget.checkpoint.islandId);
+
+    if (!mounted) return;
 
     Navigator.pushReplacement(
       context,
