@@ -36,10 +36,10 @@ class SeaPassportStampModel {
   factory SeaPassportStampModel.fromJson(Map<String, dynamic> json) {
     return SeaPassportStampModel(
       id: json['island_id'] ?? '',
-      name: json['island_name'] ?? '',
-      image: json['image_url'],
+      name: json['name'] ?? '',
+      image: json['image'],
       isUnlocked: json['is_unlocked'] ?? false,
-      order: json['order_number'] ?? 0,
+      order: json['order_index'] ?? 0,
     );
   }
 }

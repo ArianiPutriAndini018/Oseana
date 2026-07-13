@@ -41,9 +41,24 @@ class _SeaPassportContentState extends State<SeaPassportContent> {
       if (!mounted) return;
 
       setState(() {
-        _stamps = stamps..sort((a, b) => a.order.compareTo(b.order));
-        _rewards = rewards.where((r) => r.isUnlocked).toList()
+        _stamps = stamps.map((s) {
+          final local = SeaPassportData.stamps.firstWhere((ls) => ls.id == s.id, orElse: () => s);
+          // Prefer local image if available, otherwise check if Supabase image is valid, else force empty string.
+          final validImage = (local.image != null && local.image!.isNotEmpty) 
+              ? local.image 
+              : ((s.image != null && s.image!.length > 5) ? s.image : "");
+          return s.copyWith(image: validImage);
+        }).toList()..sort((a, b) => a.order.compareTo(b.order));
+
+        _rewards = rewards.map((r) {
+          final local = SeaPassportData.rewards.firstWhere((lr) => lr.id == r.id, orElse: () => r);
+          final validImage = (local.image.isNotEmpty) 
+              ? local.image 
+              : ((r.image.length > 5) ? r.image : "");
+          return r.copyWith(image: validImage);
+        }).where((r) => r.isUnlocked).toList()
           ..sort((a, b) => a.order.compareTo(b.order));
+
         _isLoading = false;
       });
     } catch (e) {

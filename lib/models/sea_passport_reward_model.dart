@@ -39,13 +39,13 @@ class SeaPassportRewardModel {
 
   factory SeaPassportRewardModel.fromJson(Map<String, dynamic> json) {
     return SeaPassportRewardModel(
-      id: json['id']?.toString() ?? '',
+      id: json['slug'] ?? json['id']?.toString() ?? '',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
-      image: json['image_url'] ?? '',
+      image: json['image'] ?? json['image_url'] ?? '',
       xpReward: json['xp_reward'] ?? 0,
       isUnlocked: json['is_unlocked'] ?? false,
-      order: json['order_number'] ?? 0,
+      order: json['order_index'] ?? json['order_number'] ?? 0,
     );
   }
 }
