@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
+import '../../core/controllers/user_profile_controller.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/services/auth_service.dart';
+import '../../data/repositories/profile_repository.dart';
 import '../../widgets/auth/login_content.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import 'register_screen.dart';
@@ -44,6 +46,17 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      final currentUser = _authService.currentUser;
+      if (currentUser != null) {
+        final profile = await ProfileRepository().getProfile(currentUser.id);
+        if (profile != null) {
+          UserProfileController.instance.updateProfile(
+            userName: profile.username,
+            avatar: profile.avatar,
+          );
+        }
+      }
 
       if (!mounted) return;
 
