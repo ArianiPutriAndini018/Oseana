@@ -6,6 +6,7 @@ class IslandData {
 
   static const List<IslandModel> islands = [
     IslandModel(
+      id: 'sumatera',
       name: 'Sumatra',
       image: AppImages.islandSumatra,
       status: IslandStatus.locked,
@@ -14,6 +15,7 @@ class IslandData {
       widthFactor: 0.50,
     ),
     IslandModel(
+      id: 'jawa',
       name: 'Jawa',
       image: AppImages.islandJawa,
       status: IslandStatus.locked,
@@ -22,6 +24,7 @@ class IslandData {
       widthFactor: 0.48,
     ),
     IslandModel(
+      id: 'kalimantan',
       name: 'Kalimantan',
       image: AppImages.islandKalimantan,
       status: IslandStatus.locked,
@@ -30,6 +33,7 @@ class IslandData {
       widthFactor: 0.40,
     ),
     IslandModel(
+      id: 'sulawesi',
       name: 'Sulawesi',
       image: AppImages.islandSulawesi,
       status: IslandStatus.locked,
@@ -38,6 +42,7 @@ class IslandData {
       widthFactor: 0.40,
     ),
     IslandModel(
+      id: 'papua',
       name: 'Papua',
       image: AppImages.islandPapua,
       status: IslandStatus.locked,
@@ -46,6 +51,7 @@ class IslandData {
       widthFactor: 0.52,
     ),
     IslandModel(
+      id: 'ntb',
       name: 'NTB',
       image: AppImages.islandNtb,
       status: IslandStatus.locked,
@@ -54,6 +60,7 @@ class IslandData {
       widthFactor: 0.48,
     ),
     IslandModel(
+      id: 'ntt',
       name: 'NTT',
       image: AppImages.islandNtt,
       status: IslandStatus.current,

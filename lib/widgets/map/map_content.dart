@@ -10,6 +10,7 @@ class MapContent extends StatelessWidget {
   final int completedCount;
   final int totalCount;
   final int level;
+  final List<IslandModel> islands;
   final ValueChanged<IslandModel> onIslandTap;
 
   const MapContent({
@@ -17,6 +18,7 @@ class MapContent extends StatelessWidget {
     required this.completedCount,
     required this.totalCount,
     required this.level,
+    required this.islands,
     required this.onIslandTap,
   });
 
@@ -43,6 +45,7 @@ class MapContent extends StatelessWidget {
             const MapLegend(),
             const SizedBox(height: 8),
             MapCanvas(
+              islands: islands,
               showBackground: false,
               onIslandTap: onIslandTap,
             ),

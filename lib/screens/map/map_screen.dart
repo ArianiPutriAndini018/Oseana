@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/controllers/audio_controller.dart';
 import '../../core/routes/app_routes.dart';
+import '../../core/services/auth_service.dart';
 import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
 import '../../data/island_data.dart';
+import '../../data/repositories/passport_repository.dart';
 import '../../models/island_model.dart';
 import '../../models/learning_mode_type.dart';
 import '../../widgets/map/map_background.dart';
@@ -32,6 +34,11 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   static const int _currentIndex = 1;
 
+  final _passportRepository = PassportRepository();
+  final _authService = AuthService();
+  List<IslandModel> _islands = IslandData.islands;
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -39,10 +46,67 @@ class _MapScreenState extends State<MapScreen> {
     unawaited(
       AudioController.instance.playMapMusic(),
     );
+
+    unawaited(_loadIslands());
+  }
+
+  Future<void> _loadIslands() async {
+    final userId = _authService.currentUser?.id;
+
+    try {
+      final stamps = await _passportRepository.getStamps(userId);
+      final unlockedIds = stamps
+          .where((s) => s.isUnlocked)
+          .map((s) => s.id)
+          .toSet();
+
+      final updated = <IslandModel>[];
+      var currentAssigned = false;
+
+      for (final island in IslandData.islands) {
+        IslandStatus status;
+        int stars = island.stars;
+
+        if (unlockedIds.contains(island.id)) {
+          status = IslandStatus.completed;
+          stars = 3;
+        } else if (!currentAssigned) {
+          status = IslandStatus.current;
+          currentAssigned = true;
+          stars = 0;
+        } else {
+          status = IslandStatus.locked;
+          stars = 0;
+        }
+
+        updated.add(
+          IslandModel(
+            id: island.id,
+            name: island.name,
+            image: island.image,
+            status: status,
+            leftFactor: island.leftFactor,
+            topFactor: island.topFactor,
+            widthFactor: island.widthFactor,
+            stars: stars,
+          ),
+        );
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _islands = updated;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    }
   }
 
   int get _completedCount {
-    return IslandData.islands
+    return _islands
         .where((island) => island.status == IslandStatus.completed)
         .length;
   }
@@ -140,10 +204,13 @@ class _MapScreenState extends State<MapScreen> {
           const MapBackground(),
           MapContent(
             completedCount: _completedCount,
-            totalCount: IslandData.islands.length,
+            totalCount: _islands.length,
             level: 1,
+            islands: _islands,
             onIslandTap: _onIslandTap,
           ),
+          if (_isLoading)
+            const Center(child: CircularProgressIndicator()),
           ScreenBackButton(
             onPressed: _handleBack,
           ),
