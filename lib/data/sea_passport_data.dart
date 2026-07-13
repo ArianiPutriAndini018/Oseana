@@ -25,44 +25,44 @@ class SeaPassportData {
   }
 
   static List<SeaPassportStampModel> stamps = [
-    SeaPassportStampModel(
+    const SeaPassportStampModel(
       id: 'ntt',
       name: 'NTT',
       image: AppImages.passportStampNtt,
       isUnlocked: false,
       order: 1,
     ),
-    SeaPassportStampModel(
+    const SeaPassportStampModel(
       id: 'ntb',
       name: 'NTB',
       isUnlocked: false,
       order: 2,
     ),
-    SeaPassportStampModel(
+    const SeaPassportStampModel(
       id: 'papua',
       name: 'Papua',
       isUnlocked: false,
       order: 3,
     ),
-    SeaPassportStampModel(
+    const SeaPassportStampModel(
       id: 'jawa',
       name: 'Jawa',
       isUnlocked: false,
       order: 4,
     ),
-    SeaPassportStampModel(
+    const SeaPassportStampModel(
       id: 'sumatra',
       name: 'Sumatra',
       isUnlocked: false,
       order: 5,
     ),
-    SeaPassportStampModel(
+    const SeaPassportStampModel(
       id: 'sulawesi',
       name: 'Sulawesi',
       isUnlocked: false,
       order: 6,
     ),
-    SeaPassportStampModel(
+    const SeaPassportStampModel(
       id: 'kalimantan',
       name: 'Kalimantan',
       isUnlocked: false,
@@ -71,7 +71,7 @@ class SeaPassportData {
   ];
 
   static List<SeaPassportRewardModel> rewards = [
-    SeaPassportRewardModel(
+    const SeaPassportRewardModel(
       id: 'penjelajah_pemula',
       title: 'Penjelajah Pemula',
       description: 'Selesai 1 pulau',
@@ -80,7 +80,7 @@ class SeaPassportData {
       isUnlocked: false,
       order: 1,
     ),
-    SeaPassportRewardModel(
+    const SeaPassportRewardModel(
       id: 'pemula_kuis',
       title: 'Pemula Kuis',
       description: 'Lulus kuis pertama',
@@ -89,7 +89,7 @@ class SeaPassportData {
       isUnlocked: false,
       order: 2,
     ),
-    SeaPassportRewardModel(
+    const SeaPassportRewardModel(
       id: 'master_kuis',
       title: 'Master Kuis',
       description: 'Dapat 3 bintang sekali main',

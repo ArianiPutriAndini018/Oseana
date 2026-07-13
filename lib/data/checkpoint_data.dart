@@ -26,7 +26,7 @@ class CheckpointData {
   );
 
   static List<BiotaModel> nttBiotas = [
-    BiotaModel(
+    const BiotaModel(
       id: 'biota_ntt_001',
       islandId: 'ntt',
       name: 'Komodo Damselfish',
@@ -46,7 +46,7 @@ class CheckpointData {
       isLearned: false,
       order: 1,
     ),
-    BiotaModel(
+    const BiotaModel(
       id: 'biota_ntt_002',
       islandId: 'ntt',
       name: 'Rennya’s Flasher Wrasse',
@@ -66,7 +66,7 @@ class CheckpointData {
       isLearned: false,
       order: 2,
     ),
-    BiotaModel(
+    const BiotaModel(
       id: 'biota_ntt_003',
       islandId: 'ntt',
       name: 'Greentail Triplefin',
