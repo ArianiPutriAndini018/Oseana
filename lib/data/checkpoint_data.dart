@@ -5,11 +5,11 @@ import '../models/island_checkpoint_model.dart';
 class CheckpointData {
   CheckpointData._();
 
-  static final List<IslandCheckpointModel> checkpoints = [
+  static List<IslandCheckpointModel> checkpoints = [
     nttCheckpoint,
   ];
 
-  static final IslandCheckpointModel nttCheckpoint = IslandCheckpointModel(
+  static IslandCheckpointModel nttCheckpoint = IslandCheckpointModel(
     id: 'checkpoint_ntt',
     islandId: 'ntt',
     title: 'Biota Pulau NTT',
@@ -25,7 +25,7 @@ class CheckpointData {
     biotas: nttBiotas,
   );
 
-  static final List<BiotaModel> nttBiotas = [
+  static List<BiotaModel> nttBiotas = [
     const BiotaModel(
       id: 'biota_ntt_001',
       islandId: 'ntt',
@@ -108,5 +108,11 @@ class CheckpointData {
     }
 
     return checkpoint;
+  }
+
+  static void resetForGuest() {
+    nttBiotas = nttBiotas.map((biota) => biota.copyWith(isLearned: false)).toList();
+    nttCheckpoint = nttCheckpoint.copyWith(progress: 0.0, biotas: nttBiotas);
+    checkpoints = [nttCheckpoint];
   }
 }

@@ -36,4 +36,16 @@ class SeaPassportRewardModel {
       order: order ?? this.order,
     );
   }
+
+  factory SeaPassportRewardModel.fromJson(Map<String, dynamic> json) {
+    return SeaPassportRewardModel(
+      id: json['slug']?.toString() ?? json['id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      image: json['image']?.toString() ?? '',
+      xpReward: json['xp_reward'] as int? ?? 0,
+      isUnlocked: json['is_unlocked'] == true,
+      order: json['order_index'] as int? ?? 0,
+    );
+  }
 }

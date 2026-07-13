@@ -6,14 +6,14 @@ import 'profile_data.dart';
 class SeaPassportData {
   SeaPassportData._();
 
-  static const String userName = ProfileData.userName;
-  static const String avatar = ProfileData.avatar;
-  static const String level = ProfileData.level;
-  static const String title = ProfileData.title;
+  static String userName = ProfileData.userName;
+  static String avatar = ProfileData.avatar;
+  static String level = ProfileData.level;
+  static String title = ProfileData.title;
 
-  static const int xp = 15;
-  static const int completedIslandCount = 1;
-  static const int totalIslandCount = 7;
+  static int xp = 15;
+  static int completedIslandCount = 1;
+  static int totalIslandCount = 7;
 
   static double get learningProgressValue {
     if (totalIslandCount <= 0) return 0;
@@ -24,7 +24,7 @@ class SeaPassportData {
     return (learningProgressValue * 100).round();
   }
 
-  static const List<SeaPassportStampModel> stamps = [
+  static List<SeaPassportStampModel> stamps = [
     SeaPassportStampModel(
       id: 'ntt',
       name: 'NTT',
@@ -70,7 +70,7 @@ class SeaPassportData {
     ),
   ];
 
-  static const List<SeaPassportRewardModel> rewards = [
+  static List<SeaPassportRewardModel> rewards = [
     SeaPassportRewardModel(
       id: 'penjelajah_pemula',
       title: 'Penjelajah Pemula',
@@ -114,5 +114,14 @@ class SeaPassportData {
     result.sort((a, b) => a.order.compareTo(b.order));
 
     return result;
+  }
+
+  static void resetForGuest() {
+    userName = 'penjelajah';
+    xp = 0;
+    completedIslandCount = 0;
+
+    stamps = stamps.map((s) => s.copyWith(isUnlocked: false)).toList();
+    rewards = rewards.map((r) => r.copyWith(isUnlocked: false)).toList();
   }
 }

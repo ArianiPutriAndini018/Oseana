@@ -17,6 +17,7 @@ dependencies:
   youtube_player_flutter: ^10.0.1
   confetti: ^0.8.0
   audioplayers: ^6.7.1
+  supabase_flutter: ^2.16.0
 
 dev_dependencies:
   flutter_test:

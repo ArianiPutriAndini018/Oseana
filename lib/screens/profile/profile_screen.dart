@@ -7,6 +7,7 @@ import '../../core/utils/home_bottom_nav_action.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../../widgets/profile/profile_content.dart';
+import '../auth/welcome_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final bool openedFromBottomNav;
@@ -92,10 +93,12 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _handleLogout(BuildContext context) {
-    AppSnackBar.show(
+    Navigator.pushAndRemoveUntil(
       context,
-      'Fitur keluar akan dihubungkan nanti',
-      backgroundColor: AppColors.primary,
+      MaterialPageRoute(
+        builder: (_) => const WelcomeScreen(),
+      ),
+      (route) => false,
     );
   }
 

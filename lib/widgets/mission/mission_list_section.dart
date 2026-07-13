@@ -7,10 +7,12 @@ import 'mission_item_card.dart';
 
 class MissionListSection extends StatelessWidget {
   final List<MissionModel> missions;
+  final Function(MissionModel)? onMissionComplete;
 
   const MissionListSection({
     super.key,
     required this.missions,
+    this.onMissionComplete,
   });
 
   @override
@@ -40,6 +42,9 @@ class MissionListSection extends StatelessWidget {
                 MissionItemCard(
                   mission: missions[index],
                   isSmall: isSmall,
+                  onDonePressed: onMissionComplete != null && !missions[index].isCompleted
+                      ? () => onMissionComplete!(missions[index])
+                      : null,
                 ),
                 if (index != missions.length - 1)
                   SizedBox(height: isSmall ? 10 : 12),

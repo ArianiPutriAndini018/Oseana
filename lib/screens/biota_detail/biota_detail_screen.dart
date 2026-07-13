@@ -5,6 +5,7 @@ import '../../core/constants/app_radius.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../models/biota_model.dart';
 import '../../models/island_checkpoint_model.dart';
+import '../../widgets/backgrounds/animated_splash_background.dart';
 import '../../widgets/biota_detail/biota_detail_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
@@ -104,10 +105,12 @@ class _BiotaDetailScreenState extends State<BiotaDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.primary,
       extendBody: true,
       body: Stack(
         children: [
+          const AnimatedSplashBackground(),
+
           BiotaDetailContent(
             biota: widget.biota,
             selectedType: _selectedType,

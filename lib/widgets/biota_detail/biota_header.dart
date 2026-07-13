@@ -25,7 +25,7 @@ class BiotaHeader extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: AppTextStyles.bodyLarge.copyWith(
-            color: AppColors.primary,
+            color: AppColors.white,
             fontSize: isSmall ? 24 : 27,
             fontWeight: FontWeight.w800,
             height: 1.1,
@@ -38,7 +38,7 @@ class BiotaHeader extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: AppTextStyles.bodyLarge.copyWith(
-            color: AppColors.primary,
+            color: AppColors.white,
             fontSize: isSmall ? 16 : 18,
             fontWeight: FontWeight.w500,
             fontStyle: FontStyle.italic,

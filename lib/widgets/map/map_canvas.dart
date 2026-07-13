@@ -12,19 +12,21 @@ import 'canvas/map_stars.dart';
 import 'canvas/map_status_node_positioned.dart';
 
 class MapCanvas extends StatelessWidget {
-  final List<IslandModel> islands;
+  final List<IslandModel>? islands;
   final ValueChanged<IslandModel>? onIslandTap;
   final bool showBackground;
 
   const MapCanvas({
     super.key,
-    this.islands = IslandData.islands,
+    this.islands,
     this.onIslandTap,
     this.showBackground = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    final displayIslands = islands ?? IslandData.islands;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth.isFinite
@@ -47,28 +49,27 @@ class MapCanvas extends StatelessWidget {
                 canvasWidth: width,
                 canvasHeight: canvasHeight,
               ),
-              for (final island in islands)
+              for (final island in displayIslands)
                 MapIslandImage(
                   island: island,
                   canvasWidth: width,
                   canvasHeight: canvasHeight,
                   onTap: onIslandTap,
                 ),
-              for (final island in islands)
-                if (island.stars > 0)
-                  MapStars(
-                    island: island,
-                    canvasWidth: width,
-                    canvasHeight: canvasHeight,
-                  ),
-              for (final island in islands)
+              for (final island in displayIslands)
+                MapStars(
+                  island: island,
+                  canvasWidth: width,
+                  canvasHeight: canvasHeight,
+                ),
+              for (final island in displayIslands)
                 MapIslandLabelPositioned(
                   island: island,
                   canvasWidth: width,
                   canvasHeight: canvasHeight,
                   onTap: onIslandTap,
                 ),
-              for (final island in islands)
+              for (final island in displayIslands)
                 MapStatusNodePositioned(
                   island: island,
                   canvasWidth: width,

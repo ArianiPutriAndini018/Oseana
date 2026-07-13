@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'core/controllers/audio_controller.dart';
 import 'core/routes/app_routes.dart';
+import 'core/utils/responsive_util.dart';
 import 'screens/splash/splash_screen.dart';
 
 void main() async {
@@ -17,11 +18,20 @@ class OseanaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Oseana Quest',
-      debugShowCheckedModeBanner: false,
-      onGenerateRoute: AppRoutes.onGenerateRoute,
-      home: SplashScreen(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return OrientationBuilder(
+          builder: (context, orientation) {
+            ResponsiveUtil().init(constraints, orientation);
+            return const MaterialApp(
+              title: 'Oseana Quest',
+              debugShowCheckedModeBanner: false,
+              onGenerateRoute: AppRoutes.onGenerateRoute,
+              home: SplashScreen(),
+            );
+          },
+        );
+      },
     );
   }
 }

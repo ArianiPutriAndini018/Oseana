@@ -4,15 +4,15 @@ import '../models/mission_model.dart';
 class MissionData {
   MissionData._();
 
-  static const int userXp = 200;
+  static int userXp = 200;
 
-  static const int completedMissionCount = 1;
-  static const int totalMissionCount = 9;
+  static int completedMissionCount = 1;
+  static int totalMissionCount = 9;
 
-  static const int completedMissionXp = 5;
-  static const int totalMissionXp = 45;
+  static int completedMissionXp = 5;
+  static int totalMissionXp = 45;
 
-  static const List<MissionModel> missions = [
+  static List<MissionModel> missions = [
     MissionModel(
       id: 'reduce_plastic',
       title: 'Kurangi Plastik Sekali Pakai',
@@ -109,5 +109,13 @@ class MissionData {
 
   static List<MissionModel> get previewMissions {
     return orderedMissions.take(5).toList();
+  }
+
+  static void resetForGuest() {
+    userXp = 0;
+    completedMissionCount = 0;
+    completedMissionXp = 0;
+
+    missions = missions.map((m) => m.copyWith(isCompleted: false)).toList();
   }
 }

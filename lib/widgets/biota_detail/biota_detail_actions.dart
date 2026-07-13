@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../buttons/primary_button.dart';
 import '../buttons/secondary_button.dart';
 
 class BiotaDetailActions extends StatelessWidget {
@@ -29,7 +28,7 @@ class BiotaDetailActions extends StatelessWidget {
             onPressed: onVideoPressed,
           ),
           const SizedBox(height: 22),
-          PrimaryButton(
+          SecondaryButton(
             text: 'Pelajari Biota Lain',
             onPressed: onLearnOtherPressed,
           ),

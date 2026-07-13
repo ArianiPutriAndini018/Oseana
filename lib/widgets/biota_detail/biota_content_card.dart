@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -27,23 +28,31 @@ class BiotaContentCard extends StatelessWidget {
     final content = biota.contentByType(selectedType);
 
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(
-        isSmall ? 12 : 16,
-        isSmall ? 14 : 18,
-        isSmall ? 12 : 16,
-        isSmall ? 22 : 26,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
+      decoration: const BoxDecoration(
         borderRadius: AppRadius.radiusXXL,
-        border: Border.all(
-          color: AppColors.border,
-          width: 1.1,
-        ),
         boxShadow: AppShadows.medium,
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: AppRadius.radiusXXL,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.fromLTRB(
+              isSmall ? 12 : 16,
+              isSmall ? 14 : 18,
+              isSmall ? 12 : 16,
+              isSmall ? 22 : 26,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.white.withValues(alpha: 0.75),
+              borderRadius: AppRadius.radiusXXL,
+              border: Border.all(
+                color: AppColors.white.withValues(alpha: 0.6),
+                width: 1.5,
+              ),
+            ),
+            child: Column(
         children: [
           LayoutBuilder(
             builder: (context, constraints) {
@@ -122,6 +131,9 @@ class BiotaContentCard extends StatelessWidget {
             ),
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

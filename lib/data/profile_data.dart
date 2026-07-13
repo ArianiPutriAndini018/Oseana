@@ -7,17 +7,17 @@ import '../models/profile_stat_model.dart';
 class ProfileData {
   ProfileData._();
 
-  static const String userId = 'user_001';
+  static String userId = 'user_001';
 
-  static const String userName = 'Cassie';
-  static const String avatar = AppImages.avatarCrab;
+  static String userName = 'Cassie';
+  static String avatar = AppImages.avatarCrab;
 
-  static const String level = 'Level 1';
-  static const int levelNumber = 1;
-  static const String title = 'Penjelajah Pemula';
+  static String level = 'Level 1';
+  static int levelNumber = 1;
+  static String title = 'Penjelajah Pemula';
 
-  static const int xp = 20;
-  static const int maxXp = 150;
+  static int xp = 20;
+  static int maxXp = 150;
 
   static double get xpProgressValue {
     if (maxXp <= 0) return 0;
@@ -28,7 +28,7 @@ class ProfileData {
     return (xpProgressValue * 100).round();
   }
 
-  static const List<ProfileStatModel> topStats = [
+  static List<ProfileStatModel> topStats = [
     ProfileStatModel(
       id: 'islands_learned',
       title: 'Pulau Dipelajari',
@@ -71,7 +71,7 @@ class ProfileData {
     ),
   ];
 
-  static const List<ProfileStatModel> bottomStats = [
+  static List<ProfileStatModel> bottomStats = [
     ProfileStatModel(
       id: 'badges_earned',
       title: 'Badge Diperoleh',
@@ -137,5 +137,22 @@ class ProfileData {
     final result = [...menus];
     result.sort((a, b) => a.order.compareTo(b.order));
     return result;
+  }
+
+  static void resetForGuest() {
+    userName = 'penjelajah';
+    xp = 0;
+
+    topStats = [
+      topStats[0].copyWith(value: '0/7'),
+      topStats[1].copyWith(value: '0/21'),
+      topStats[2].copyWith(value: '0/21'),
+      topStats[3].copyWith(value: '0/21'),
+    ];
+
+    bottomStats = [
+      bottomStats[0].copyWith(value: '0/16'),
+      bottomStats[1].copyWith(value: '0/9'),
+    ];
   }
 }

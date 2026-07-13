@@ -23,4 +23,24 @@ class IslandModel {
     required this.widthFactor,
     this.stars = 0,
   });
+
+  IslandModel copyWith({
+    String? name,
+    String? image,
+    IslandStatus? status,
+    double? leftFactor,
+    double? topFactor,
+    double? widthFactor,
+    int? stars,
+  }) {
+    return IslandModel(
+      name: name ?? this.name,
+      image: image ?? this.image,
+      status: status ?? this.status,
+      leftFactor: leftFactor ?? this.leftFactor,
+      topFactor: topFactor ?? this.topFactor,
+      widthFactor: widthFactor ?? this.widthFactor,
+      stars: stars ?? this.stars,
+    );
+  }
 }

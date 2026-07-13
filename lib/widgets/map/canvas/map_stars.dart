@@ -18,10 +18,6 @@ class MapStars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (island.stars <= 0) {
-      return const SizedBox.shrink();
-    }
-
     final layout = IslandDecorationLayout.of(island.name);
 
     final starsPosition = layout.stars ??
@@ -30,17 +26,34 @@ class MapStars extends StatelessWidget {
           layout.label.dy - 0.05,
         );
 
+    Widget image = Image.asset(
+      _starAsset,
+      width: canvasWidth * _starWidthFactor,
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.high,
+    );
+
+    if (island.stars <= 0) {
+      image = ColorFiltered(
+        colorFilter: const ColorFilter.matrix(<double>[
+          0.2126, 0.7152, 0.0722, 0, 0,
+          0.2126, 0.7152, 0.0722, 0, 0,
+          0.2126, 0.7152, 0.0722, 0, 0,
+          0,      0,      0,      1, 0,
+        ]),
+        child: Opacity(
+          opacity: 0.8,
+          child: image,
+        ),
+      );
+    }
+
     return Positioned(
       left: canvasWidth * starsPosition.dx,
       top: canvasHeight * starsPosition.dy,
       child: FractionalTranslation(
         translation: const Offset(-0.5, -0.5),
-        child: Image.asset(
-          _starAsset,
-          width: canvasWidth * _starWidthFactor,
-          fit: BoxFit.contain,
-          filterQuality: FilterQuality.high,
-        ),
+        child: image,
       ),
     );
   }

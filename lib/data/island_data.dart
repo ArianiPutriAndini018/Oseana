@@ -4,7 +4,7 @@ import '../models/island_model.dart';
 class IslandData {
   IslandData._();
 
-  static const List<IslandModel> islands = [
+  static List<IslandModel> islands = [
     IslandModel(
       name: 'Sumatra',
       image: AppImages.islandSumatra,
@@ -63,4 +63,18 @@ class IslandData {
       stars: 3,
     ),
   ];
+
+  static void resetForGuest() {
+    islands = islands.map((island) {
+      if (island.name == 'NTT' || island.name == 'NTB') {
+        // Initial state for guest, e.g. start at NTB or NTT. 
+        // Let's just set all to locked except NTT which might be the starting one, or make NTT current and others locked.
+        if (island.name == 'NTT') {
+          return island.copyWith(stars: 0, status: IslandStatus.current);
+        }
+        return island.copyWith(stars: 0, status: IslandStatus.locked);
+      }
+      return island.copyWith(stars: 0, status: IslandStatus.locked);
+    }).toList();
+  }
 }
