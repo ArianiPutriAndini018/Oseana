@@ -53,7 +53,7 @@ class MissionListScreen extends StatelessWidget {
                 isSmall ? 18 : 24,
                 150,
               ),
-              child: MissionListSection(
+              child: const MissionListSection(
                 missions: MissionData.missions,
               ),
             ),

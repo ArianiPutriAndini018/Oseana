@@ -30,8 +30,8 @@ class ProfileLogoutButton extends StatelessWidget {
           borderRadius: AppRadius.radiusXL,
           child: Ink(
             height: isSmall ? 54 : 60,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
