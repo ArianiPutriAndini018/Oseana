@@ -23,7 +23,8 @@ class AuthService {
     } on AuthException catch (e) {
       throw Exception(_mapAuthException(e));
     } catch (e) {
-      throw Exception('Terjadi kesalahan yang tidak terduga. Silakan coba lagi.');
+      throw Exception(
+          'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.');
     }
   }
 
@@ -39,7 +40,8 @@ class AuthService {
     } on AuthException catch (e) {
       throw Exception(_mapAuthException(e));
     } catch (e) {
-      throw Exception('Terjadi kesalahan yang tidak terduga. Silakan coba lagi.');
+      throw Exception(
+          'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.');
     }
   }
 
@@ -52,6 +54,7 @@ class AuthService {
   }
 
   String _mapAuthException(AuthException e) {
+    print("ERROR ASLI SUPABASE: ${e.message}");
     switch (e.message.toLowerCase()) {
       case 'invalid login credentials':
       case 'invalid_credentials':
@@ -60,6 +63,8 @@ class AuthService {
         return 'Email ini sudah terdaftar.';
       case 'password should be at least 6 characters':
         return 'Password harus minimal 6 karakter.';
+      case 'email rate limit exceeded':
+        return 'Terlalu banyak percobaan. Silakan coba lagi beberapa saat lagi.';
       default:
         return 'Gagal memproses autentikasi. Silakan periksa koneksi Anda.';
     }
