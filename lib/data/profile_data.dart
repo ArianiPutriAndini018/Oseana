@@ -9,14 +9,14 @@ class ProfileData {
 
   static const String userId = 'user_001';
 
-  static const String userName = 'Cassie';
+  static const String userName = 'Penjelajah';
   static const String avatar = AppImages.avatarCrab;
 
   static const String level = 'Level 1';
   static const int levelNumber = 1;
   static const String title = 'Penjelajah Pemula';
 
-  static const int xp = 20;
+  static const int xp = 0;
   static const int maxXp = 150;
 
   static double get xpProgressValue {
@@ -32,7 +32,7 @@ class ProfileData {
     ProfileStatModel(
       id: 'islands_learned',
       title: 'Pulau Dipelajari',
-      value: '1/7',
+      value: '0/7',
       iconKey: 'island',
       iconAsset: AppImages.profileIslandIcon,
       fallbackIcon: Icons.beach_access_rounded,
@@ -42,7 +42,7 @@ class ProfileData {
     ProfileStatModel(
       id: 'total_stars',
       title: 'Total Bintang',
-      value: '3/21',
+      value: '0/21',
       iconKey: 'star',
       iconAsset: AppImages.profileStarIcon,
       fallbackIcon: Icons.star_rounded,
@@ -52,7 +52,7 @@ class ProfileData {
     ProfileStatModel(
       id: 'biota_learned',
       title: 'Biota Dipelajari',
-      value: '1/21',
+      value: '0/21',
       iconKey: 'biota',
       iconAsset: AppImages.profileBiotaLearnedIcon,
       fallbackIcon: Icons.menu_book_rounded,
@@ -62,7 +62,7 @@ class ProfileData {
     ProfileStatModel(
       id: 'missions_done',
       title: 'Misi Selesai',
-      value: '3/21',
+      value: '0/21',
       iconKey: 'mission',
       iconAsset: AppImages.profileMissionCompleteIcon,
       fallbackIcon: Icons.fact_check_rounded,
@@ -75,7 +75,7 @@ class ProfileData {
     ProfileStatModel(
       id: 'badges_earned',
       title: 'Badge Diperoleh',
-      value: '3/16',
+      value: '0/16',
       iconKey: 'badge',
       iconAsset: AppImages.profileBadgeIcon,
       fallbackIcon: Icons.workspace_premium_rounded,
@@ -85,7 +85,7 @@ class ProfileData {
     ProfileStatModel(
       id: 'stamps_collected',
       title: 'Stamp Terkumpul',
-      value: '1/9',
+      value: '0/9',
       iconKey: 'stamp',
       iconAsset: AppImages.profileStampIcon,
       fallbackIcon: Icons.approval_rounded,

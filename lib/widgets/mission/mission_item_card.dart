@@ -10,7 +10,7 @@ import '../../models/mission_model.dart';
 class MissionItemCard extends StatelessWidget {
   final MissionModel mission;
   final bool isSmall;
-  final VoidCallback? onDonePressed;
+  final void Function(BuildContext context)? onDonePressed;
 
   const MissionItemCard({
     super.key,
@@ -150,7 +150,7 @@ class _MissionActionColumn extends StatelessWidget {
   final int xpReward;
   final bool isCompleted;
   final bool isSmall;
-  final VoidCallback? onPressed;
+  final void Function(BuildContext context)? onPressed;
 
   const _MissionActionColumn({
     required this.xpReward,
@@ -237,7 +237,7 @@ class _MissionXpBadge extends StatelessWidget {
 class _MissionDoneButton extends StatelessWidget {
   final bool isCompleted;
   final bool isSmall;
-  final VoidCallback? onPressed;
+  final void Function(BuildContext context)? onPressed;
 
   const _MissionDoneButton({
     required this.isCompleted,
@@ -253,11 +253,17 @@ class _MissionDoneButton extends StatelessWidget {
       child: Material(
         color: AppColors.white,
         borderRadius: AppRadius.radiusMD,
-        child: InkWell(
-          borderRadius: AppRadius.radiusMD,
-          onTap: onPressed,
-          child: Container(
-            alignment: Alignment.center,
+        child: Builder(
+          builder: (buttonContext) {
+            return InkWell(
+              borderRadius: AppRadius.radiusMD,
+              onTap: () {
+                if (onPressed != null) {
+                  onPressed!(buttonContext);
+                }
+              },
+              child: Container(
+                alignment: Alignment.center,
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: AppRadius.radiusMD,
@@ -277,8 +283,10 @@ class _MissionDoneButton extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        );
+      },
+    ),
+  ),
+);
   }
 }

@@ -45,14 +45,21 @@ class MissionFloatingXpBadge extends StatelessWidget {
             fit: BoxFit.contain,
           ),
           SizedBox(width: isSmall ? 4 : 5),
-          Text(
-            '$xp XP',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.blueDark,
-              fontSize: isSmall ? 15 : 17,
-              fontWeight: FontWeight.w900,
-              height: 1,
-            ),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(end: xp.toDouble()),
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return Text(
+                '${value.toInt()} XP',
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.blueDark,
+                  fontSize: isSmall ? 15 : 17,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                ),
+              );
+            },
           ),
         ],
       ),

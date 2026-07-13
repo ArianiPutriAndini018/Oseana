@@ -7,7 +7,9 @@ import 'mission_about_card.dart';
 import 'mission_header.dart';
 import 'mission_list_section.dart';
 
-class MissionContent extends StatelessWidget {
+import '../../models/mission_model.dart';
+
+class MissionContent extends StatefulWidget {
   final VoidCallback? onViewAllPressed;
 
   const MissionContent({
@@ -15,9 +17,26 @@ class MissionContent extends StatelessWidget {
     this.onViewAllPressed,
   });
 
+  @override
+  State<MissionContent> createState() => _MissionContentState();
+}
+
+class _MissionContentState extends State<MissionContent> {
+  late int userXp;
+  late int completedMissionCount;
+  late int completedMissionXp;
+
+  @override
+  void initState() {
+    super.initState();
+    userXp = MissionData.userXp;
+    completedMissionCount = MissionData.completedMissionCount;
+    completedMissionXp = MissionData.completedMissionXp;
+  }
+
   void _handleViewAllPressed(BuildContext context) {
-    if (onViewAllPressed != null) {
-      onViewAllPressed!();
+    if (widget.onViewAllPressed != null) {
+      widget.onViewAllPressed!();
       return;
     }
 
@@ -25,6 +44,60 @@ class MissionContent extends StatelessWidget {
       context,
       AppRoutes.missionList,
     );
+  }
+
+  void _showFloatingXp(int xp, BuildContext buttonContext) {
+    final RenderBox? renderBox = buttonContext.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+    
+    final position = renderBox.localToGlobal(Offset.zero);
+    final overlay = Overlay.of(context);
+    late OverlayEntry entry;
+
+    entry = OverlayEntry(
+      builder: (context) {
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 1500),
+          curve: Curves.easeOutCubic,
+          onEnd: () {
+            entry.remove();
+          },
+          builder: (context, value, child) {
+            return Positioned(
+              left: position.dx + 20,
+              top: position.dy - (value * 80),
+              child: Opacity(
+                opacity: 1.0 - value,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Text(
+                    '+$xp XP',
+                    style: const TextStyle(
+                      color: Color(0xFF048E75),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    overlay.insert(entry);
+  }
+
+  void _onMissionDone(MissionModel mission, BuildContext buttonContext) {
+    setState(() {
+      userXp += mission.xpReward;
+      completedMissionCount += 1;
+      completedMissionXp += mission.xpReward;
+    });
+    
+    _showFloatingXp(mission.xpReward, buttonContext);
   }
 
   @override
@@ -44,19 +117,20 @@ class MissionContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const MissionHeader(
-              userXp: MissionData.userXp,
+            MissionHeader(
+              userXp: userXp,
             ),
             SizedBox(height: isSmall ? 18 : 22),
-            const MissionAboutCard(
-              completedMissionCount: MissionData.completedMissionCount,
+            MissionAboutCard(
+              completedMissionCount: completedMissionCount,
               totalMissionCount: MissionData.totalMissionCount,
-              completedMissionXp: MissionData.completedMissionXp,
+              completedMissionXp: completedMissionXp,
               totalMissionXp: MissionData.totalMissionXp,
             ),
             SizedBox(height: isSmall ? 20 : 24),
             MissionListSection(
               missions: MissionData.previewMissions,
+              onMissionDone: _onMissionDone,
             ),
             SizedBox(height: isSmall ? 20 : 24),
             Padding(

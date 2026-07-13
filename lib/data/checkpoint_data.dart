@@ -15,7 +15,7 @@ class CheckpointData {
     title: 'Biota Pulau NTT',
     bannerImage: AppImages.checkpointNttBanner,
     progressTitle: 'Progress Pulau',
-    progress: 1.0,
+    progress: 0.0,
     checkpointCode: 'QR_NTT_001',
     manualCodeHint: '',
     detailSubtitle: 'Yuk, pelajari ketiga biota sebelum memulai kuis!',
@@ -43,7 +43,7 @@ class CheckpointData {
       food:
           'Makanan Komodo Damselfish berupa plankton kecil, organisme mikro, dan partikel makanan yang berada di sekitar terumbu karang.',
       videoUrl: 'https://youtu.be/5mkVld0FpvQ?si=10yk7Mzh_Pu2Y6hb',
-      isLearned: true,
+      isLearned: false,
       order: 1,
     ),
     const BiotaModel(
@@ -63,7 +63,7 @@ class CheckpointData {
       food:
           'Makanan utamanya adalah zooplankton dan organisme kecil yang melayang di kolom air.',
       videoUrl: '',
-      isLearned: true,
+      isLearned: false,
       order: 2,
     ),
     const BiotaModel(
@@ -83,7 +83,7 @@ class CheckpointData {
       food:
           'Greentail Triplefin memakan organisme kecil seperti krustasea mikro dan plankton yang hidup di sekitar karang.',
       videoUrl: '',
-      isLearned: true,
+      isLearned: false,
       order: 3,
     ),
   ];

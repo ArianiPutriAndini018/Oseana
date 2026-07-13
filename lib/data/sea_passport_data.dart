@@ -11,8 +11,8 @@ class SeaPassportData {
   static const String level = ProfileData.level;
   static const String title = ProfileData.title;
 
-  static const int xp = 15;
-  static const int completedIslandCount = 1;
+  static const int xp = 0;
+  static const int completedIslandCount = 0;
   static const int totalIslandCount = 7;
 
   static double get learningProgressValue {
@@ -29,7 +29,7 @@ class SeaPassportData {
       id: 'ntt',
       name: 'NTT',
       image: AppImages.passportStampNtt,
-      isUnlocked: true,
+      isUnlocked: false,
       order: 1,
     ),
     SeaPassportStampModel(
@@ -77,7 +77,7 @@ class SeaPassportData {
       description: 'Selesai 1 pulau',
       image: AppImages.rewardPenjelajahPemula,
       xpReward: 5,
-      isUnlocked: true,
+      isUnlocked: false,
       order: 1,
     ),
     SeaPassportRewardModel(
@@ -86,7 +86,7 @@ class SeaPassportData {
       description: 'Lulus kuis pertama',
       image: AppImages.rewardPemulaKuis,
       xpReward: 5,
-      isUnlocked: true,
+      isUnlocked: false,
       order: 2,
     ),
     SeaPassportRewardModel(
@@ -95,7 +95,7 @@ class SeaPassportData {
       description: 'Dapat 3 bintang sekali main',
       image: AppImages.rewardMasterKuis,
       xpReward: 5,
-      isUnlocked: true,
+      isUnlocked: false,
       order: 3,
     ),
   ];

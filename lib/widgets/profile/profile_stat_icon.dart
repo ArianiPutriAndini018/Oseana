@@ -15,9 +15,10 @@ class ProfileStatIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconAsset = stat.iconAsset;
+    final bool isZeroStar = stat.id == 'total_stars' && stat.value.startsWith('0/');
 
     if (iconAsset != null) {
-      return Image.asset(
+      Widget image = Image.asset(
         iconAsset,
         width: size,
         height: size,
@@ -25,16 +26,28 @@ class ProfileStatIcon extends StatelessWidget {
         errorBuilder: (context, error, stackTrace) {
           return Icon(
             stat.fallbackIcon,
-            color: stat.fallbackIconColor,
+            color: isZeroStar ? Colors.grey : stat.fallbackIconColor,
             size: size,
           );
         },
       );
+
+      if (isZeroStar) {
+        return ColorFiltered(
+          colorFilter: const ColorFilter.mode(
+            Colors.grey,
+            BlendMode.srcIn,
+          ),
+          child: image,
+        );
+      }
+
+      return image;
     }
 
     return Icon(
       stat.fallbackIcon,
-      color: stat.fallbackIconColor,
+      color: isZeroStar ? Colors.grey : stat.fallbackIconColor,
       size: size,
     );
   }

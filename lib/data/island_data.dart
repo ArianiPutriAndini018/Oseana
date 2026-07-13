@@ -48,7 +48,7 @@ class IslandData {
     IslandModel(
       name: 'NTB',
       image: AppImages.islandNtb,
-      status: IslandStatus.current,
+      status: IslandStatus.locked,
       leftFactor: -0.02,
       topFactor: 0.67,
       widthFactor: 0.48,
@@ -56,11 +56,11 @@ class IslandData {
     IslandModel(
       name: 'NTT',
       image: AppImages.islandNtt,
-      status: IslandStatus.completed,
+      status: IslandStatus.current,
       leftFactor: 0.40,
       topFactor: 0.80,
       widthFactor: 0.60,
-      stars: 3,
+      stars: 0,
     ),
   ];
 }
