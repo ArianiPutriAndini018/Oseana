@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../auth/welcome_screen.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/utils/app_snack_bar.dart';
@@ -92,10 +94,12 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _handleLogout(BuildContext context) {
-    AppSnackBar.show(
+    Navigator.pushAndRemoveUntil(
       context,
-      'Fitur keluar akan dihubungkan nanti',
-      backgroundColor: AppColors.primary,
+      MaterialPageRoute(
+        builder: (_) => const WelcomeScreen(),
+      ),
+      (route) => false,
     );
   }
 

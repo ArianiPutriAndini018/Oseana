@@ -7,7 +7,9 @@ import '../../core/constants/app_text_styles.dart';
 import '../../core/controllers/audio_controller.dart';
 import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
+import '../../data/checkpoint_data.dart';
 import '../../data/quiz_data.dart';
+import '../../data/sea_passport_data.dart';
 import '../../models/island_checkpoint_model.dart';
 import '../../models/quiz_question_model.dart';
 import '../../widgets/backgrounds/animated_splash_background.dart';
@@ -135,11 +137,16 @@ class _QuizScreenState extends State<QuizScreen> {
       );
     }
 
+    CheckpointData.updateProgress(widget.checkpoint.islandId, 1.0);
+    SeaPassportData.unlockStamp(widget.checkpoint.islandId);
+
+    final updatedCheckpoint = CheckpointData.getCheckpointByIslandId(widget.checkpoint.islandId);
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => QuizResultScreen(
-          checkpoint: widget.checkpoint,
+          checkpoint: updatedCheckpoint,
           score: _score,
           totalCount: _questions.length,
         ),

@@ -11,9 +11,9 @@ class SeaPassportData {
   static const String level = ProfileData.level;
   static const String title = ProfileData.title;
 
-  static const int xp = 0;
-  static const int completedIslandCount = 0;
-  static const int totalIslandCount = 7;
+  static int xp = 0;
+  static int completedIslandCount = 0;
+  static int totalIslandCount = 7;
 
   static double get learningProgressValue {
     if (totalIslandCount <= 0) return 0;
@@ -24,7 +24,7 @@ class SeaPassportData {
     return (learningProgressValue * 100).round();
   }
 
-  static const List<SeaPassportStampModel> stamps = [
+  static List<SeaPassportStampModel> stamps = [
     SeaPassportStampModel(
       id: 'ntt',
       name: 'NTT',
@@ -70,7 +70,7 @@ class SeaPassportData {
     ),
   ];
 
-  static const List<SeaPassportRewardModel> rewards = [
+  static List<SeaPassportRewardModel> rewards = [
     SeaPassportRewardModel(
       id: 'penjelajah_pemula',
       title: 'Penjelajah Pemula',
@@ -114,5 +114,13 @@ class SeaPassportData {
     result.sort((a, b) => a.order.compareTo(b.order));
 
     return result;
+  }
+
+  static void unlockStamp(String islandId) {
+    final idx = stamps.indexWhere((s) => s.id.toLowerCase() == islandId.toLowerCase());
+    if (idx != -1 && !stamps[idx].isUnlocked) {
+      stamps[idx] = stamps[idx].copyWith(isUnlocked: true);
+      completedIslandCount++;
+    }
   }
 }

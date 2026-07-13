@@ -5,11 +5,11 @@ import '../models/island_checkpoint_model.dart';
 class CheckpointData {
   CheckpointData._();
 
-  static final List<IslandCheckpointModel> checkpoints = [
+  static List<IslandCheckpointModel> checkpoints = [
     nttCheckpoint,
   ];
 
-  static final IslandCheckpointModel nttCheckpoint = IslandCheckpointModel(
+  static IslandCheckpointModel nttCheckpoint = IslandCheckpointModel(
     id: 'checkpoint_ntt',
     islandId: 'ntt',
     title: 'Biota Pulau NTT',
@@ -25,8 +25,8 @@ class CheckpointData {
     biotas: nttBiotas,
   );
 
-  static final List<BiotaModel> nttBiotas = [
-    const BiotaModel(
+  static List<BiotaModel> nttBiotas = [
+    BiotaModel(
       id: 'biota_ntt_001',
       islandId: 'ntt',
       name: 'Komodo Damselfish',
@@ -46,7 +46,7 @@ class CheckpointData {
       isLearned: false,
       order: 1,
     ),
-    const BiotaModel(
+    BiotaModel(
       id: 'biota_ntt_002',
       islandId: 'ntt',
       name: 'Rennya’s Flasher Wrasse',
@@ -66,7 +66,7 @@ class CheckpointData {
       isLearned: false,
       order: 2,
     ),
-    const BiotaModel(
+    BiotaModel(
       id: 'biota_ntt_003',
       islandId: 'ntt',
       name: 'Greentail Triplefin',
@@ -108,5 +108,14 @@ class CheckpointData {
     }
 
     return checkpoint;
+  }
+
+  static void updateProgress(String islandId, double progress) {
+    final idx = checkpoints.indexWhere((c) => c.islandId.toLowerCase() == islandId.toLowerCase());
+    if (idx != -1) {
+      final old = checkpoints[idx];
+      final updatedBiotas = old.biotas.map((b) => b.copyWith(isLearned: true)).toList();
+      checkpoints[idx] = old.copyWith(progress: progress, biotas: updatedBiotas);
+    }
   }
 }
