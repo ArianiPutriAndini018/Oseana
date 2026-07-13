@@ -78,11 +78,28 @@ class _UnlockedStamp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
+    return Image.network(
       image,
       width: size,
       height: size,
       fit: BoxFit.contain,
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return SizedBox(
+          width: size,
+          height: size,
+          child: const Center(
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(
+          Icons.image_not_supported_outlined,
+          size: size,
+          color: Colors.grey,
+        );
+      },
     );
   }
 }
