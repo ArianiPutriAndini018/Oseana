@@ -118,4 +118,12 @@ class CheckpointData {
       checkpoints[idx] = old.copyWith(progress: progress, biotas: updatedBiotas);
     }
   }
+
+  static void resetGuestProgress() {
+    for (int i = 0; i < checkpoints.length; i++) {
+      final old = checkpoints[i];
+      final resetBiotas = old.biotas.map((b) => b.copyWith(isLearned: false)).toList();
+      checkpoints[i] = old.copyWith(progress: 0.0, biotas: resetBiotas);
+    }
+  }
 }

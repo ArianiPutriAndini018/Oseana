@@ -24,4 +24,11 @@ class UserProfileController extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  void resetGuestProfile() {
+    _userName = 'Guest';
+    _avatar = ProfileData.avatar;
+
+    notifyListeners();
+  }
 }
