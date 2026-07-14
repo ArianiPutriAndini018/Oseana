@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../data/profile_data.dart';
 import '../../data/repositories/biota_repository.dart';
+import '../../data/repositories/profile_repository.dart';
+import '../../models/profile_stat_model.dart';
 import '../services/auth_service.dart';
 
 class UserProfileController extends ChangeNotifier {

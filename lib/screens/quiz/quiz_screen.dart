@@ -34,7 +34,8 @@ class QuizScreen extends StatefulWidget {
 class _QuizScreenState extends State<QuizScreen> {
   static const int _bottomNavIndex = 1;
 
-  late final List<QuizQuestionModel> _questions;
+  List<QuizQuestionModel>? _questions;
+  bool _isLoading = true;
 
   int _currentQuestionIndex = 0;
   int _score = 0;
@@ -44,11 +45,11 @@ class _QuizScreenState extends State<QuizScreen> {
   bool _isFinishing = false;
 
   QuizQuestionModel get _currentQuestion {
-    return _questions[_currentQuestionIndex];
+    return _questions![_currentQuestionIndex];
   }
 
   bool get _isLastQuestion {
-    return _currentQuestionIndex == _questions.length - 1;
+    return _currentQuestionIndex == _questions!.length - 1;
   }
 
   bool get _canContinue {
@@ -65,18 +66,38 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   bool get _isPerfectScore {
-    return _score == _questions.length;
+    return _score == _questions!.length;
   }
 
   @override
   void initState() {
     super.initState();
+    _loadQuestions();
+  }
 
-    _questions = QuizData.findByIslandId(widget.checkpoint.islandId);
+  Future<void> _loadQuestions() async {
+    try {
+      final dbQuestions = await QuizRepository().getQuestionsByIslandId(widget.checkpoint.islandId);
+      if (dbQuestions.isNotEmpty) {
+        _questions = dbQuestions;
+      } else {
+        // Fallback ke data lokal jika di Supabase belum ada kuisnya
+        _questions = QuizData.findByIslandId(widget.checkpoint.islandId);
+      }
+    } catch (e) {
+      _questions = QuizData.findByIslandId(widget.checkpoint.islandId);
+    }
 
-    unawaited(
-      AudioController.instance.playQuizMusic(),
-    );
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (_questions != null && _questions!.isNotEmpty) {
+        unawaited(
+          AudioController.instance.playQuizMusic(),
+        );
+      }
+    }
   }
 
   void _onOptionSelected(int index) {
@@ -146,7 +167,7 @@ class _QuizScreenState extends State<QuizScreen> {
     // Save result to database
     final user = AuthService().currentUser;
     if (user != null) {
-      final totalCount = _questions.length;
+      final totalCount = _questions!.length;
       final scorePercentage = totalCount > 0 ? (_score / totalCount * 100).toInt() : 0;
       
       int stars = 0;
@@ -191,7 +212,7 @@ class _QuizScreenState extends State<QuizScreen> {
         builder: (_) => QuizResultScreen(
           checkpoint: updatedCheckpoint,
           score: _score,
-          totalCount: _questions.length,
+          totalCount: _questions!.length,
         ),
       ),
     );
@@ -215,14 +236,18 @@ class _QuizScreenState extends State<QuizScreen> {
       body: Stack(
         children: [
           const AnimatedSplashBackground(),
-          if (_questions.isEmpty)
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(color: AppColors.white),
+            )
+          else if (_questions == null || _questions!.isEmpty)
             const _QuizEmptyState()
           else
             QuizContent(
               title: _quizTitle,
               question: _currentQuestion,
               currentIndex: _currentQuestionIndex,
-              totalCount: _questions.length,
+              totalCount: _questions!.length,
               selectedAnswerIndex: _selectedAnswerIndex,
               showResult: _showResult,
               canContinue: _canContinue,
