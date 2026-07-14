@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/profile_data.dart';
 import '../../data/repositories/biota_repository.dart';
+import '../../data/repositories/mission_repository.dart';
 import '../../data/repositories/passport_repository.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../data/repositories/quiz_repository.dart';
@@ -87,6 +88,18 @@ class UserProfileController extends ChangeNotifier {
         }
       } catch (e) {
         print('Error loading stamps: $e');
+      }
+
+      // Load Missions Done
+      try {
+        final completedMissions = await MissionRepository().getCompletedMissionIds(user.id);
+        final missionIndex = _topStats.indexWhere((s) => s.id == 'missions_done');
+        if (missionIndex != -1) {
+          // Total missions available in MissionData is 9
+          _topStats[missionIndex] = _topStats[missionIndex].copyWith(value: '${completedMissions.length}/9');
+        }
+      } catch (e) {
+        print('Error loading missions done: $e');
       }
 
       notifyListeners();

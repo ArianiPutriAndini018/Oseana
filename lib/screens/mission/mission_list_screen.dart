@@ -44,31 +44,33 @@ class MissionListScreen extends StatelessWidget {
       extendBody: true,
       body: Stack(
         children: [
-          SafeArea(
-            bottom: false,
-            child: AnimatedBuilder(
-              animation: MissionController.instance,
-              builder: (context, _) {
-                final controller = MissionController.instance;
+          SizedBox.expand(
+            child: SafeArea(
+              bottom: false,
+              child: AnimatedBuilder(
+                animation: MissionController.instance,
+                builder: (context, _) {
+                  final controller = MissionController.instance;
 
-                if (controller.isLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  if (controller.isLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(
+                      isSmall ? 18 : 24,
+                      isSmall ? 92 : 104,
+                      isSmall ? 18 : 24,
+                      150,
+                    ),
+                    child: MissionListSection(
+                      missions: controller.orderedMissions,
+                    ),
                   );
                 }
-
-                return SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(
-                    isSmall ? 18 : 24,
-                    isSmall ? 92 : 104,
-                    isSmall ? 18 : 24,
-                    150,
-                  ),
-                  child: MissionListSection(
-                    missions: controller.missions,
-                  ),
-                );
-              }
+              ),
             ),
           ),
 

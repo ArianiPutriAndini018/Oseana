@@ -142,7 +142,7 @@ class _MapScreenState extends State<MapScreen> {
       case IslandStatus.completed:
       case IslandStatus.current:
         final checkpoint = CheckpointData.findCheckpointByIslandId(
-          island.name,
+          island.id,
         );
 
         if (checkpoint == null) {

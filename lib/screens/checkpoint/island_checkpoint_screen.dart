@@ -38,7 +38,7 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
 
   IslandCheckpointModel get _checkpoint {
     return CheckpointData.getCheckpointByIslandId(
-      widget.island.name,
+      widget.island.id,
     );
   }
 
@@ -49,7 +49,7 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
     _manualCodeController = TextEditingController();
 
     if (widget.island.stars == 3) {
-      CheckpointData.updateProgress(widget.island.name, 1.0);
+      CheckpointData.updateProgress(widget.island.id, 1.0);
     }
   }
 
