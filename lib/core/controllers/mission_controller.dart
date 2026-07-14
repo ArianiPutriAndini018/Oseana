@@ -3,6 +3,7 @@ import '../../models/mission_model.dart';
 import '../../data/mission_data.dart';
 import '../../core/services/auth_service.dart';
 import '../../data/repositories/mission_repository.dart';
+import '../../data/repositories/badge_unlock_service.dart';
 
 class MissionController extends ChangeNotifier {
   MissionController._() {
@@ -68,26 +69,31 @@ class MissionController extends ChangeNotifier {
     }
   }
 
-  Future<void> completeMission(String missionId) async {
-    if (_isCompletingMission) return;
+  Future<List<String>> completeMission(String missionId) async {
+    if (_isCompletingMission) return [];
     
     final missionIndex = _missions.indexWhere((m) => m.id == missionId);
-    if (missionIndex == -1 || _missions[missionIndex].isCompleted) return;
+    if (missionIndex == -1 || _missions[missionIndex].isCompleted) return [];
 
     final currentUser = AuthService().currentUser;
-    if (currentUser == null) return; // Guest cannot complete missions
+    if (currentUser == null) return []; // Guest cannot complete missions
 
     _isCompletingMission = true;
     notifyListeners();
 
+    List<String> newBadges = [];
+
     try {
       final mission = _missions[missionIndex];
       
-      // Persist to Supabase first! (Ini otomatis manggil ProfileRepository.addXp(5) di dalamnya)
+      // Persist to Supabase first!
       await MissionRepository().completeMission(currentUser.id, mission.id);
 
       // If successful, update local state
       _missions[missionIndex] = mission.copyWith(isCompleted: true);
+
+      // Check for unlocked badges
+      newBadges = await BadgeUnlockService().checkAndUnlockBadges(currentUser.id);
 
     } catch (e) {
       print('Failed to complete mission: $e');
@@ -96,6 +102,8 @@ class MissionController extends ChangeNotifier {
       _isCompletingMission = false;
       notifyListeners();
     }
+    
+    return newBadges;
   }
 }
 

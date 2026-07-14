@@ -5,6 +5,7 @@ import '../../core/constants/app_radius.dart';
 import '../../core/constants/app_shadows.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../models/biota_model.dart';
+import '../common/network_or_asset_image.dart';
 
 class UpdateProgressBiotaTile extends StatelessWidget {
   final BiotaModel biota;
@@ -35,8 +36,8 @@ class UpdateProgressBiotaTile extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: AppRadius.radiusMD,
-            child: Image.asset(
-              biota.image,
+            child: NetworkOrAssetImage(
+              imagePath: biota.image,
               width: isSmall ? 76 : 82,
               height: isSmall ? 76 : 82,
               fit: BoxFit.cover,

@@ -78,9 +78,9 @@ class IslandCheckpointModel {
       islandId:
           json['islandId']?.toString() ?? json['island_id']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
-      bannerImage: json['bannerImage']?.toString() ??
+      bannerImage: (json['bannerImage']?.toString() ??
           json['banner_image']?.toString() ??
-          '',
+          '').trim().replaceAll('"', ''),
       progressTitle: json['progressTitle']?.toString() ??
           json['progress_title']?.toString() ??
           'Progress Pulau',

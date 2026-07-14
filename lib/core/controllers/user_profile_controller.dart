@@ -102,6 +102,19 @@ class UserProfileController extends ChangeNotifier {
         print('Error loading missions done: $e');
       }
 
+      // Load Badges Earned
+      try {
+        final rewards = await PassportRepository().getRewards(user.id);
+        final unlockedCount = rewards.where((r) => r.isUnlocked).length;
+            
+        final badgeIndex = _bottomStats.indexWhere((s) => s.id == 'badges_earned');
+        if (badgeIndex != -1) {
+          _bottomStats[badgeIndex] = _bottomStats[badgeIndex].copyWith(value: '$unlockedCount/16');
+        }
+      } catch (e) {
+        print('Error loading badges earned: $e');
+      }
+
       notifyListeners();
     }
   }

@@ -10,6 +10,7 @@ import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
 import '../../data/quiz_data.dart';
 import '../../data/repositories/quiz_repository.dart';
+import '../../data/repositories/badge_unlock_service.dart';
 import '../../data/sea_passport_data.dart';
 import '../../core/services/auth_service.dart';
 import '../../models/island_checkpoint_model.dart';
@@ -199,6 +200,28 @@ class _QuizScreenState extends State<QuizScreen> {
           _isFinishing = false;
         });
         return; // Hentikan navigasi ke result screen jika gagal simpan
+      }
+
+      try {
+        final newBadges = await BadgeUnlockService().checkAndUnlockBadges(user.id);
+        if (mounted && newBadges.isNotEmpty) {
+          for (final title in newBadges) {
+            AppSnackBar.show(
+              context,
+              'Badge baru terbuka: $title',
+              backgroundColor: AppColors.success,
+            );
+          }
+        }
+      } catch (e) {
+        print('Error unlocking badges: $e');
+        if (mounted) {
+          AppSnackBar.show(
+            context,
+            'Error Badge: $e',
+            backgroundColor: AppColors.error,
+          );
+        }
       }
     }
 

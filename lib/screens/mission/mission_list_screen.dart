@@ -4,6 +4,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/controllers/mission_controller.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
+import '../../core/utils/app_snack_bar.dart';
 import '../../widgets/mission/mission_list_section.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
@@ -67,6 +68,18 @@ class MissionListScreen extends StatelessWidget {
                     ),
                     child: MissionListSection(
                       missions: controller.orderedMissions,
+                      onMissionDone: (mission, btnContext) async {
+                        final newBadges = await controller.completeMission(mission.id);
+                        if (btnContext.mounted && newBadges.isNotEmpty) {
+                          for (final title in newBadges) {
+                            AppSnackBar.show(
+                              btnContext,
+                              'Badge baru terbuka: $title',
+                              backgroundColor: AppColors.success,
+                            );
+                          }
+                        }
+                      },
                     ),
                   );
                 }

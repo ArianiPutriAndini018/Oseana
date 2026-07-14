@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/constants/app_colors.dart';
+import '../../core/utils/app_snack_bar.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/controllers/mission_controller.dart';
 import '../../core/controllers/user_profile_controller.dart';
@@ -82,12 +84,22 @@ class _MissionContentState extends State<MissionContent> {
 
   void _onMissionDone(MissionModel mission, BuildContext buttonContext) async {
     final controller = MissionController.instance;
-    await controller.completeMission(mission.id);
+    final newBadges = await controller.completeMission(mission.id);
     
     if (!buttonContext.mounted) return;
 
     // Asumsikan completeMission berhasil karena error tertangkap di controller dan gagal tidak mengubah state UI
     _showFloatingXp(mission.xpReward, buttonContext);
+
+    if (newBadges.isNotEmpty) {
+      for (final title in newBadges) {
+        AppSnackBar.show(
+          buttonContext,
+          'Badge baru terbuka: $title',
+          backgroundColor: AppColors.success,
+        );
+      }
+    }
   }
 
   @override

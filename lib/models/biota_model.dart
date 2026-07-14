@@ -41,7 +41,7 @@ class BiotaModel {
           json['latinName'] ??
           json['latin_name'] ??
           '',
-      image: json['image'] ?? '',
+      image: (json['image']?.toString() ?? '').trim().replaceAll('"', ''),
       summary:
           json['summary'] ?? json['ringkasan'] ?? json['description'] ?? '',
       habitat: json['habitat'] ?? '',
