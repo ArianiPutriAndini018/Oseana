@@ -124,9 +124,9 @@ class _SeaPassportContentState extends State<SeaPassportContent> {
                 SeaPassportCard(
                   userName: profileController.userName,
                   avatar: profileController.avatar,
-                  level: SeaPassportData.level,
-                  title: SeaPassportData.title,
-                  xp: SeaPassportData.xp,
+                  level: profileController.level,
+                  title: profileController.title,
+                  xp: profileController.xp,
                   stamps: _stamps,
                   rewards: _rewards,
                   completedIslandCount: _completedIslandCount,
