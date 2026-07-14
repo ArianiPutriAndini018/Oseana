@@ -28,7 +28,10 @@ class CheckpointBiotaGridItem extends StatelessWidget {
           height: isSmall ? 82 : 92,
           child: ClipRRect(
             borderRadius: AppRadius.radiusLG,
-            child: _buildImage(),
+            child: Hero(
+              tag: 'biota-image-${biota.id}',
+              child: _buildImage(),
+            ),
           ),
         ),
         const SizedBox(height: 8),

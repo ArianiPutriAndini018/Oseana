@@ -43,10 +43,13 @@ class BiotaDetailContent extends StatelessWidget {
               biota: biota,
             ),
             const SizedBox(height: 28),
-            BiotaImageCard(
-              biota: biota,
-              width: isSmall ? 240 : 270,
-              height: isSmall ? 135 : 150,
+            Hero(
+              tag: 'biota-image-${biota.id}',
+              child: BiotaImageCard(
+                biota: biota,
+                width: isSmall ? 240 : 270,
+                height: isSmall ? 135 : 150,
+              ),
             ),
             const SizedBox(height: 28),
             BiotaContentCard(
