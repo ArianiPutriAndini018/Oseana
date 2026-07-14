@@ -6,6 +6,7 @@ import '../../data/onboarding_data.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../../widgets/onboarding/onboarding_content.dart';
 import '../auth/welcome_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -68,7 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _goToWelcome() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const WelcomeScreen(),
       ),
     );

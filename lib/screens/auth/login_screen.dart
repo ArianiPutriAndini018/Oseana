@@ -9,6 +9,7 @@ import '../../data/repositories/profile_repository.dart';
 import '../../widgets/auth/login_content.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import 'register_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -82,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _goToRegister() {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const RegisterScreen(),
       ),
     );

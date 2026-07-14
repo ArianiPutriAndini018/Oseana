@@ -8,6 +8,7 @@ import '../../widgets/auth/welcome_content.dart';
 import '../home/home_screen.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -24,7 +25,7 @@ class WelcomeScreen extends StatelessWidget {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const HomeScreen(),
       ),
     );
@@ -33,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
   void _goToLogin(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const LoginScreen(),
       ),
     );
@@ -42,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
   void _goToRegister(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const RegisterScreen(),
       ),
     );

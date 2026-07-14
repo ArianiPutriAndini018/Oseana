@@ -10,6 +10,7 @@ import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../biota_detail/biota_detail_screen.dart';
 import '../quiz/quiz_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class IslandDetailScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
@@ -52,7 +53,7 @@ class _IslandDetailScreenState extends State<IslandDetailScreen> {
   ) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => BiotaDetailScreen(
           checkpoint: _currentCheckpoint,
           biota: biota,
@@ -66,7 +67,7 @@ class _IslandDetailScreenState extends State<IslandDetailScreen> {
   void _onQuizPressed(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => QuizScreen(checkpoint: _currentCheckpoint),
       ),
     );

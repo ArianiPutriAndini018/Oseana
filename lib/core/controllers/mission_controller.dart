@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/mission_model.dart';
 import '../../data/mission_data.dart';
 import '../../core/services/auth_service.dart';
+import '../../core/controllers/user_profile_controller.dart';
 import '../../data/repositories/mission_repository.dart';
 import '../../data/repositories/badge_unlock_service.dart';
 
@@ -69,7 +70,7 @@ class MissionController extends ChangeNotifier {
     }
   }
 
-  Future<List<String>> completeMission(String missionId) async {
+  Future<List<Map<String, String>>> completeMission(String missionId) async {
     if (_isCompletingMission) return [];
     
     final missionIndex = _missions.indexWhere((m) => m.id == missionId);
@@ -81,7 +82,7 @@ class MissionController extends ChangeNotifier {
     _isCompletingMission = true;
     notifyListeners();
 
-    List<String> newBadges = [];
+    List<Map<String, String>> newBadges = [];
 
     try {
       final mission = _missions[missionIndex];
@@ -94,6 +95,9 @@ class MissionController extends ChangeNotifier {
 
       // Check for unlocked badges
       newBadges = await BadgeUnlockService().checkAndUnlockBadges(currentUser.id);
+
+      // Refresh profile stats (XP, level, missions done)
+      UserProfileController.instance.loadStats();
 
     } catch (e) {
       print('Failed to complete mission: $e');

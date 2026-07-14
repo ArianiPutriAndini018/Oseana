@@ -23,15 +23,13 @@ class ProfileRepository {
 
   Future<UserProfileModel?> addXp(String userId, int xpToAdd) async {
     try {
-      // Get current profile first to calculate new XP
       final currentProfileData = await _client
           .from('profiles')
-          .select('xp')
+          .select('xp, level_number, max_xp, title')
           .eq('id', userId)
           .maybeSingle();
       
       if (currentProfileData == null) {
-        // Create profile if missing
         await _client.from('profiles').insert({
           'id': userId,
           'xp': xpToAdd,
@@ -41,11 +39,46 @@ class ProfileRepository {
       
       int currentXp = currentProfileData['xp'] is int 
           ? currentProfileData['xp'] as int 
-          : int.tryParse(currentProfileData['xp'].toString()) ?? 0;
+          : int.tryParse(currentProfileData['xp']?.toString() ?? '0') ?? 0;
           
+      int levelNumber = currentProfileData['level_number'] is int
+          ? currentProfileData['level_number'] as int
+          : int.tryParse(currentProfileData['level_number']?.toString() ?? '1') ?? 1;
+          
+      int maxXp = currentProfileData['max_xp'] is int
+          ? currentProfileData['max_xp'] as int
+          : int.tryParse(currentProfileData['max_xp']?.toString() ?? '150') ?? 150;
+          
+      String title = currentProfileData['title']?.toString() ?? 'Pemula';
+
+      int newXp = currentXp + xpToAdd;
+      
+      // Level Up Logic
+      while (newXp >= maxXp) {
+        newXp -= maxXp;
+        levelNumber++;
+        maxXp += 50; // Increase max XP requirement for next level
+        
+        // Update Title based on level
+        if (levelNumber >= 20) {
+            title = 'Legenda Samudra';
+        } else if (levelNumber >= 15) {
+            title = 'Penguasa Lautan';
+        } else if (levelNumber >= 10) {
+            title = 'Penjelajah Ahli';
+        } else if (levelNumber >= 5) {
+            title = 'Penjelajah Aktif';
+        }
+      }
+
       final data = await _client
           .from('profiles')
-          .update({'xp': currentXp + xpToAdd})
+          .update({
+            'xp': newXp,
+            'level_number': levelNumber,
+            'max_xp': maxXp,
+            'title': title
+          })
           .eq('id', userId)
           .select()
           .maybeSingle();

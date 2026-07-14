@@ -9,6 +9,7 @@ import '../../widgets/splash/splash_bubble_overlay.dart';
 import '../../widgets/splash/splash_content.dart';
 import '../../widgets/splash/splash_loading_bar.dart';
 import '../onboarding/onboarding_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -70,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const OnboardingScreen(),
       ),
     );

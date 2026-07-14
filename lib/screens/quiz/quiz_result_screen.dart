@@ -11,6 +11,7 @@ import '../../widgets/quiz_result/quiz_result_content.dart';
 import '../map/map_screen.dart';
 import '../progress/update_progress_screen.dart';
 import 'quiz_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class QuizResultScreen extends StatelessWidget {
   final IslandCheckpointModel checkpoint;
@@ -35,7 +36,7 @@ class QuizResultScreen extends StatelessWidget {
   void _onPassportPressed(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => UpdateProgressScreen(
           checkpoint: checkpoint,
         ),
@@ -46,7 +47,7 @@ class QuizResultScreen extends StatelessWidget {
   void _onRetryPressed(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => QuizScreen(
           checkpoint: checkpoint,
         ),
@@ -57,7 +58,7 @@ class QuizResultScreen extends StatelessWidget {
   void _onBackToMapPressed(BuildContext context) {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const MapScreen(),
       ),
       (route) => route.isFirst,

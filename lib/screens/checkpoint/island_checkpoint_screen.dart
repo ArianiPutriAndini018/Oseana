@@ -12,6 +12,7 @@ import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../island_detail/island_detail_screen.dart';
 import '../qr_scan/qr_scan_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class IslandCheckpointScreen extends StatefulWidget {
   final IslandModel island;
@@ -62,7 +63,7 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
   void _onLearnPressed() {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => IslandDetailScreen(
           checkpoint: _checkpoint,
         ),
@@ -73,7 +74,7 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
   void _onScanQrPressed() {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => QrScanScreen(
           checkpoint: _checkpoint,
         ),
@@ -108,7 +109,7 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => IslandDetailScreen(
           checkpoint: _checkpoint,
         ),

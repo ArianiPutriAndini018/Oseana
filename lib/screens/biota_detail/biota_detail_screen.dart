@@ -11,6 +11,7 @@ import '../../widgets/navigation/screen_back_button.dart';
 import '../../core/services/auth_service.dart';
 import '../../data/repositories/biota_repository.dart';
 import '../biota_video/biota_video_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class BiotaDetailScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
@@ -58,7 +59,7 @@ class _BiotaDetailScreenState extends State<BiotaDetailScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => BiotaVideoScreen(
           checkpoint: widget.checkpoint,
           biota: widget.biota,

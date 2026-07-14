@@ -9,6 +9,7 @@ import '../buttons/primary_button.dart';
 import 'mission_about_card.dart';
 import 'mission_header.dart';
 import 'mission_list_section.dart';
+import '../passport/badge_unlocked_dialog.dart';
 
 import '../../models/mission_model.dart';
 
@@ -92,11 +93,12 @@ class _MissionContentState extends State<MissionContent> {
     _showFloatingXp(mission.xpReward, buttonContext);
 
     if (newBadges.isNotEmpty) {
-      for (final title in newBadges) {
-        AppSnackBar.show(
+      for (final badge in newBadges) {
+        if (!buttonContext.mounted) break;
+        await BadgeUnlockedDialog.show(
           buttonContext,
-          'Badge baru terbuka: $title',
-          backgroundColor: AppColors.success,
+          badgeTitle: badge['title'] ?? '',
+          badgeImage: badge['image'] ?? '',
         );
       }
     }

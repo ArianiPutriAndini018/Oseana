@@ -15,10 +15,13 @@ import '../../data/sea_passport_data.dart';
 import '../../core/services/auth_service.dart';
 import '../../models/island_checkpoint_model.dart';
 import '../../models/quiz_question_model.dart';
+import '../../core/controllers/user_profile_controller.dart';
 import '../../widgets/backgrounds/animated_splash_background.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/quiz/quiz_content.dart';
+import '../../widgets/passport/badge_unlocked_dialog.dart';
 import 'quiz_result_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class QuizScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
@@ -82,7 +85,6 @@ class _QuizScreenState extends State<QuizScreen> {
       if (dbQuestions.isNotEmpty) {
         _questions = dbQuestions;
       } else {
-        // Fallback ke data lokal jika di Supabase belum ada kuisnya
         _questions = QuizData.findByIslandId(widget.checkpoint.islandId);
       }
     } catch (e) {
@@ -161,11 +163,9 @@ class _QuizScreenState extends State<QuizScreen> {
       );
     }
 
-    // Update local UI states
     CheckpointData.updateProgress(widget.checkpoint.islandId, 1.0);
     SeaPassportData.unlockStamp(widget.checkpoint.islandId);
 
-    // Save result to database
     final user = AuthService().currentUser;
     if (user != null) {
       final totalCount = _questions!.length;
@@ -199,17 +199,18 @@ class _QuizScreenState extends State<QuizScreen> {
         setState(() {
           _isFinishing = false;
         });
-        return; // Hentikan navigasi ke result screen jika gagal simpan
+        return;
       }
 
       try {
         final newBadges = await BadgeUnlockService().checkAndUnlockBadges(user.id);
         if (mounted && newBadges.isNotEmpty) {
-          for (final title in newBadges) {
-            AppSnackBar.show(
+          for (final badge in newBadges) {
+            if (!mounted) break;
+            await BadgeUnlockedDialog.show(
               context,
-              'Badge baru terbuka: $title',
-              backgroundColor: AppColors.success,
+              badgeTitle: badge['title'] ?? '',
+              badgeImage: badge['image'] ?? '',
             );
           }
         }
@@ -223,6 +224,9 @@ class _QuizScreenState extends State<QuizScreen> {
           );
         }
       }
+
+      // Refresh profile stats (XP, level, stars, badges, etc)
+      UserProfileController.instance.loadStats();
     }
 
     final updatedCheckpoint = CheckpointData.getCheckpointByIslandId(widget.checkpoint.islandId);
@@ -231,7 +235,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => QuizResultScreen(
           checkpoint: updatedCheckpoint,
           score: _score,

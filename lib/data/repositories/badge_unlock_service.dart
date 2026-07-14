@@ -5,8 +5,8 @@ class BadgeUnlockService {
 
   /// Mengecek semua kriteria badge dan meng-unlock yang memenuhi syarat.
   /// Mengembalikan daftar nama (title) badge yang baru saja terbuka.
-  Future<List<String>> checkAndUnlockBadges(String userId) async {
-    final newUnlockedTitles = <String>[];
+  Future<List<Map<String, String>>> checkAndUnlockBadges(String userId) async {
+    final newUnlockedBadges = <Map<String, String>>[];
 
     try {
       print('[Badge] Starting check for $userId');
@@ -85,6 +85,7 @@ class BadgeUnlockService {
       for (final reward in rewardsResponse) {
         final slug = reward['slug']?.toString() ?? '';
         final title = reward['title']?.toString() ?? '';
+        final image = reward['image']?.toString() ?? '';
         
         if (unlockedSlugs.contains(slug)) continue;
 
@@ -131,7 +132,10 @@ class BadgeUnlockService {
               'user_id': userId,
               'reward_slug': slug,
             });
-            newUnlockedTitles.add(title);
+            newUnlockedBadges.add({
+              'title': title,
+              'image': image,
+            });
             print('[Badge] Unlocked $slug successfully');
           } catch (e) {
             print('[Badge] Upsert failed for $slug: $e');
@@ -144,6 +148,6 @@ class BadgeUnlockService {
       throw Exception('Gagal memproses badge: $e');
     }
 
-    return newUnlockedTitles;
+    return newUnlockedBadges;
   }
 }

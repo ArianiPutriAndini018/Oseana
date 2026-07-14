@@ -9,6 +9,7 @@ import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../../widgets/qr_scan/qr_scan_content.dart';
 import '../island_detail/island_detail_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class QrScanScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
@@ -112,7 +113,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => IslandDetailScreen(
           checkpoint: widget.checkpoint,
         ),

@@ -6,6 +6,7 @@ import '../../widgets/mission/mission_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../home/home_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class MissionScreen extends StatelessWidget {
   final bool openedFromBottomNav;
@@ -21,7 +22,7 @@ class MissionScreen extends StatelessWidget {
     if (openedFromBottomNav) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
+        OceanPageRoute(
           builder: (_) => const HomeScreen(),
         ),
         (route) => false,
@@ -36,7 +37,7 @@ class MissionScreen extends StatelessWidget {
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const HomeScreen(),
       ),
       (route) => false,

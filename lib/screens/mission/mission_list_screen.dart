@@ -8,6 +8,7 @@ import '../../core/utils/app_snack_bar.dart';
 import '../../widgets/mission/mission_list_section.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
+import '../../widgets/passport/badge_unlocked_dialog.dart';
 
 class MissionListScreen extends StatelessWidget {
   const MissionListScreen({super.key});
@@ -71,11 +72,12 @@ class MissionListScreen extends StatelessWidget {
                       onMissionDone: (mission, btnContext) async {
                         final newBadges = await controller.completeMission(mission.id);
                         if (btnContext.mounted && newBadges.isNotEmpty) {
-                          for (final title in newBadges) {
-                            AppSnackBar.show(
+                          for (final badge in newBadges) {
+                            if (!btnContext.mounted) break;
+                            await BadgeUnlockedDialog.show(
                               btnContext,
-                              'Badge baru terbuka: $title',
-                              backgroundColor: AppColors.success,
+                              badgeTitle: badge['title'] ?? '',
+                              badgeImage: badge['image'] ?? '',
                             );
                           }
                         }

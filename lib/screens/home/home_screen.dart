@@ -5,6 +5,7 @@ import '../../core/utils/home_bottom_nav_action.dart';
 import '../../widgets/home/home_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../map/map_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(
+        OceanPageRoute(
           builder: (_) => const MapScreen(),
         ),
       );

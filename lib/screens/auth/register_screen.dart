@@ -6,6 +6,7 @@ import '../../core/services/auth_service.dart';
 import '../../widgets/auth/register_content.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import 'login_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -76,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _goToLogin() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const LoginScreen(),
       ),
     );

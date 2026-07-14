@@ -13,6 +13,7 @@ import '../../screens/profile/edit_profile_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/qr_scan/qr_scan_screen.dart';
 import '../../screens/settings/settings_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class MapRouteArgs {
   final LearningModeType learningMode;
@@ -235,11 +236,11 @@ class AppRoutes {
     );
   }
 
-  static MaterialPageRoute _buildRoute(
+  static Route<dynamic> _buildRoute(
     RouteSettings settings,
     Widget screen,
   ) {
-    return MaterialPageRoute(
+    return OceanPageRoute(
       settings: settings,
       builder: (_) => screen,
     );

@@ -13,7 +13,7 @@ class UserProfileController extends ChangeNotifier {
   UserProfileController._()
       : _userName = ProfileData.userName,
         _avatar = ProfileData.avatar {
-    _loadStats();
+    loadStats();
   }
 
   static final UserProfileController instance = UserProfileController._();
@@ -28,7 +28,7 @@ class UserProfileController extends ChangeNotifier {
   List<ProfileStatModel> _topStats = ProfileData.orderedTopStats;
   List<ProfileStatModel> _bottomStats = ProfileData.orderedBottomStats;
 
-  Future<void> _loadStats() async {
+  Future<void> loadStats() async {
     final user = AuthService().currentUser;
     if (user != null) {
       // Load real profile data

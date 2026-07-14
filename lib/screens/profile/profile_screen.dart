@@ -9,6 +9,7 @@ import '../../core/utils/home_bottom_nav_action.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../../widgets/profile/profile_content.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class ProfileScreen extends StatelessWidget {
   final bool openedFromBottomNav;
@@ -96,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
   void _handleLogout(BuildContext context) {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => const WelcomeScreen(),
       ),
       (route) => false,

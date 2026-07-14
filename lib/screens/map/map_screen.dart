@@ -20,6 +20,7 @@ import '../../widgets/map/map_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../checkpoint/island_checkpoint_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class MapScreen extends StatefulWidget {
   final LearningModeType learningMode;
@@ -176,7 +177,7 @@ class _MapScreenState extends State<MapScreen> {
 
     await Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => IslandCheckpointScreen(
           island: island,
           learningMode: widget.learningMode,

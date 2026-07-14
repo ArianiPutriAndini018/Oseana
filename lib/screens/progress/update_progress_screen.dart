@@ -8,6 +8,7 @@ import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../../widgets/progress/update_progress_content.dart';
 import '../passport/stamp_unlocked_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class UpdateProgressScreen extends StatelessWidget {
   final IslandCheckpointModel checkpoint;
@@ -22,7 +23,7 @@ class UpdateProgressScreen extends StatelessWidget {
   void _onContinuePressed(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => StampUnlockedScreen(
           checkpoint: checkpoint,
         ),

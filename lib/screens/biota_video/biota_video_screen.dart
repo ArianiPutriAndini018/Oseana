@@ -12,6 +12,7 @@ import '../../widgets/biota_video/biota_video_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../quiz/quiz_screen.dart';
+import '../../core/routes/ocean_page_route.dart';
 
 class BiotaVideoScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
@@ -87,7 +88,7 @@ class _BiotaVideoScreenState extends State<BiotaVideoScreen> {
   void _onQuizPressed() {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      OceanPageRoute(
         builder: (_) => QuizScreen(checkpoint: widget.checkpoint),
       ),
     );
