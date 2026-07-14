@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/routes/app_routes.dart';
+import '../../core/controllers/mission_controller.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
-import '../../data/mission_data.dart';
 import '../../widgets/mission/mission_list_section.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
@@ -46,16 +46,29 @@ class MissionListScreen extends StatelessWidget {
         children: [
           SafeArea(
             bottom: false,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(
-                isSmall ? 18 : 24,
-                isSmall ? 92 : 104,
-                isSmall ? 18 : 24,
-                150,
-              ),
-              child: const MissionListSection(
-                missions: MissionData.missions,
-              ),
+            child: AnimatedBuilder(
+              animation: MissionController.instance,
+              builder: (context, _) {
+                final controller = MissionController.instance;
+
+                if (controller.isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    isSmall ? 18 : 24,
+                    isSmall ? 92 : 104,
+                    isSmall ? 18 : 24,
+                    150,
+                  ),
+                  child: MissionListSection(
+                    missions: controller.missions,
+                  ),
+                );
+              }
             ),
           ),
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../core/routes/app_routes.dart';
-import '../../data/mission_data.dart';
+import '../../core/controllers/mission_controller.dart';
+import '../../core/controllers/user_profile_controller.dart';
 import '../buttons/primary_button.dart';
 import 'mission_about_card.dart';
 import 'mission_header.dart';
@@ -22,17 +23,6 @@ class MissionContent extends StatefulWidget {
 }
 
 class _MissionContentState extends State<MissionContent> {
-  late int userXp;
-  late int completedMissionCount;
-  late int completedMissionXp;
-
-  @override
-  void initState() {
-    super.initState();
-    userXp = MissionData.userXp;
-    completedMissionCount = MissionData.completedMissionCount;
-    completedMissionXp = MissionData.completedMissionXp;
-  }
 
   void _handleViewAllPressed(BuildContext context) {
     if (widget.onViewAllPressed != null) {
@@ -90,13 +80,13 @@ class _MissionContentState extends State<MissionContent> {
     overlay.insert(entry);
   }
 
-  void _onMissionDone(MissionModel mission, BuildContext buttonContext) {
-    setState(() {
-      userXp += mission.xpReward;
-      completedMissionCount += 1;
-      completedMissionXp += mission.xpReward;
-    });
+  void _onMissionDone(MissionModel mission, BuildContext buttonContext) async {
+    final controller = MissionController.instance;
+    await controller.completeMission(mission.id);
     
+    if (!buttonContext.mounted) return;
+
+    // Asumsikan completeMission berhasil karena error tertangkap di controller dan gagal tidak mengubah state UI
     _showFloatingXp(mission.xpReward, buttonContext);
   }
 
@@ -105,46 +95,63 @@ class _MissionContentState extends State<MissionContent> {
     final width = MediaQuery.sizeOf(context).width;
     final isSmall = width < 380;
 
-    return SafeArea(
-      bottom: false,
-      child: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-          isSmall ? 20 : 22,
-          isSmall ? 20 : 24,
-          isSmall ? 20 : 22,
-          135,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            MissionHeader(
-              userXp: userXp,
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        MissionController.instance,
+        UserProfileController.instance,
+      ]),
+      builder: (context, _) {
+        final missionController = MissionController.instance;
+        final profileController = UserProfileController.instance;
+
+        if (missionController.isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              isSmall ? 20 : 22,
+              isSmall ? 20 : 24,
+              isSmall ? 20 : 22,
+              135,
             ),
-            SizedBox(height: isSmall ? 18 : 22),
-            MissionAboutCard(
-              completedMissionCount: completedMissionCount,
-              totalMissionCount: MissionData.totalMissionCount,
-              completedMissionXp: completedMissionXp,
-              totalMissionXp: MissionData.totalMissionXp,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                MissionHeader(
+                  userXp: profileController.xp,
+                ),
+                SizedBox(height: isSmall ? 18 : 22),
+                MissionAboutCard(
+                  completedMissionCount: missionController.completedMissionCount,
+                  totalMissionCount: missionController.totalMissionCount,
+                  completedMissionXp: missionController.completedMissionXp,
+                  totalMissionXp: missionController.totalMissionXp,
+                ),
+                SizedBox(height: isSmall ? 20 : 24),
+                MissionListSection(
+                  missions: missionController.previewMissions,
+                  onMissionDone: _onMissionDone,
+                ),
+                SizedBox(height: isSmall ? 20 : 24),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isSmall ? 18 : 22,
+                  ),
+                  child: PrimaryButton(
+                    text: 'Lihat Semua Misi',
+                    onPressed: () => _handleViewAllPressed(context),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: isSmall ? 20 : 24),
-            MissionListSection(
-              missions: MissionData.previewMissions,
-              onMissionDone: _onMissionDone,
-            ),
-            SizedBox(height: isSmall ? 20 : 24),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isSmall ? 18 : 22,
-              ),
-              child: PrimaryButton(
-                text: 'Lihat Semua Misi',
-                onPressed: () => _handleViewAllPressed(context),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

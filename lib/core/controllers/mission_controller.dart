@@ -2,28 +2,21 @@ import 'package:flutter/material.dart';
 import '../../models/mission_model.dart';
 import '../../data/mission_data.dart';
 import '../../core/services/auth_service.dart';
-import '../../data/repositories/profile_repository.dart';
-import 'user_profile_controller.dart';
+import '../../data/repositories/mission_repository.dart';
 
 class MissionController extends ChangeNotifier {
   MissionController._() {
-    // Initialize missions from MissionData constants, making them mutable
-    _missions = MissionData.initialMissions.map((m) => 
-      MissionModel(
-        id: m.id,
-        title: m.title,
-        description: m.description,
-        image: m.image,
-        xpReward: m.xpReward,
-        isCompleted: m.isCompleted,
-        order: m.order,
-      )
-    ).toList();
+    loadMissions();
   }
 
   static final MissionController instance = MissionController._();
 
-  late List<MissionModel> _missions;
+  List<MissionModel> _missions = [];
+  bool _isLoading = true;
+  bool _isCompletingMission = false;
+
+  bool get isLoading => _isLoading;
+  bool get isCompletingMission => _isCompletingMission;
 
   List<MissionModel> get missions => _missions;
   
@@ -47,8 +40,33 @@ class MissionController extends ChangeNotifier {
       .where((m) => m.isCompleted)
       .fold(0, (sum, item) => sum + item.xpReward);
 
-  bool _isCompletingMission = false;
-  bool get isCompletingMission => _isCompletingMission;
+  Future<void> loadMissions() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final repository = MissionRepository();
+      List<MissionModel> loadedMissions = await MissionData.loadAllMissions();
+
+      final currentUser = AuthService().currentUser;
+      Set<String> completedIds = {};
+
+      if (currentUser != null) {
+        completedIds = await repository.getCompletedMissionIds(currentUser.id);
+      }
+
+      _missions = loadedMissions.map((m) {
+        return m.copyWith(isCompleted: completedIds.contains(m.id));
+      }).toList();
+
+    } catch (e) {
+      print('Error in loadMissions: $e');
+      _missions = MissionData.missions; // Ultimate fallback
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> completeMission(String missionId) async {
     if (_isCompletingMission) return;
@@ -56,34 +74,28 @@ class MissionController extends ChangeNotifier {
     final missionIndex = _missions.indexWhere((m) => m.id == missionId);
     if (missionIndex == -1 || _missions[missionIndex].isCompleted) return;
 
+    final currentUser = AuthService().currentUser;
+    if (currentUser == null) return; // Guest cannot complete missions
+
     _isCompletingMission = true;
     notifyListeners();
 
     try {
       final mission = _missions[missionIndex];
       
-      // Update local state first for instant feedback
-      _missions[missionIndex] = MissionModel(
-        id: mission.id,
-        title: mission.title,
-        description: mission.description,
-        image: mission.image,
-        xpReward: mission.xpReward,
-        isCompleted: true,
-        order: mission.order,
-      );
-      
-      // Update User Profile Controller XP
-      UserProfileController.instance.addXp(mission.xpReward);
+      // Persist to Supabase first! (Ini otomatis manggil ProfileRepository.addXp(5) di dalamnya)
+      await MissionRepository().completeMission(currentUser.id, mission.id);
 
-      // Persist to Supabase if logged in
-      final currentUser = AuthService().currentUser;
-      if (currentUser != null) {
-        await ProfileRepository().addXp(currentUser.id, mission.xpReward);
-      }
+      // If successful, update local state
+      _missions[missionIndex] = mission.copyWith(isCompleted: true);
+
+    } catch (e) {
+      print('Failed to complete mission: $e');
+      // DON'T update state if it fails
     } finally {
       _isCompletingMission = false;
       notifyListeners();
     }
   }
 }
+

@@ -1,5 +1,6 @@
 import '../core/constants/app_images.dart';
 import '../models/mission_model.dart';
+import 'repositories/mission_repository.dart';
 
 class MissionData {
   MissionData._();
@@ -12,6 +13,14 @@ class MissionData {
   static const int completedMissionXp = 5;
   static const int totalMissionXp = 45;
 
+  static Future<List<MissionModel>> loadAllMissions() async {
+    try {
+      return await MissionRepository().getAllMissions();
+    } catch (e) {
+      return missions; // Fallback
+    }
+  }
+
   static const List<MissionModel> missions = [
     MissionModel(
       id: 'reduce_plastic',
@@ -19,7 +28,8 @@ class MissionData {
       description: 'Gunakan barang pakai ulang dan kurangi sampah plastik.',
       image: AppImages.missionPlasticBag,
       xpReward: 5,
-      isCompleted: true,
+      category: 'plastik',
+      isCompleted: false,
       order: 1,
     ),
     MissionModel(
@@ -28,6 +38,7 @@ class MissionData {
       description: 'Biasakan membawa botol minum saat beraktivitas.',
       image: AppImages.missionBottle,
       xpReward: 5,
+      category: 'plastik',
       isCompleted: false,
       order: 2,
     ),
@@ -38,6 +49,7 @@ class MissionData {
           'Jaga kebersihan lingkungan dengan membuang sampah dengan benar.',
       image: AppImages.missionTrashBin,
       xpReward: 5,
+      category: 'umum',
       isCompleted: false,
       order: 3,
     ),
@@ -48,6 +60,7 @@ class MissionData {
           'Amati biota laut tanpa menyentuh atau mengganggu habitatnya.',
       image: AppImages.missionStarfish,
       xpReward: 5,
+      category: 'umum',
       isCompleted: false,
       order: 4,
     ),
@@ -58,6 +71,7 @@ class MissionData {
           'Ajak orang lain menjaga laut dengan membagikan pesan positif.',
       image: AppImages.missionMegaphone,
       xpReward: 5,
+      category: 'umum',
       isCompleted: false,
       order: 5,
     ),
@@ -67,7 +81,8 @@ class MissionData {
       description: 'Pilah sampah dengan benar agar tidak mencemari laut dan merusak ekosistem.',
       image: AppImages.missionSelectiveTrash,
       xpReward: 5,
-      isCompleted: true,
+      category: 'umum',
+      isCompleted: false,
       order: 6,
     ),
     MissionModel(
@@ -76,7 +91,8 @@ class MissionData {
       description: 'Bersihkan lingkungan sekitar agar sampah tidak terbawa ke laut.',
       image: AppImages.missionLessTrash,
       xpReward: 5,
-      isCompleted: true,
+      category: 'umum',
+      isCompleted: false,
       order: 7,
     ),
     MissionModel(
@@ -85,7 +101,8 @@ class MissionData {
       description: 'Kurangi penggunaan plastik sekali pakai dengan membawa tas sendiri',
       image: AppImages.missionReuseBag,
       xpReward: 5,
-      isCompleted: true,
+      category: 'plastik',
+      isCompleted: false,
       order: 8,
     ),
     MissionModel(
@@ -94,7 +111,8 @@ class MissionData {
       description: 'Hindari sedotan plastik untuk mengurangi sampah yang mencemari laut',
       image: AppImages.missionPlasticStraw,
       xpReward: 5,
-      isCompleted: true,
+      category: 'plastik',
+      isCompleted: false,
       order: 9,
     ),
   ];
