@@ -83,6 +83,7 @@ class QuizResultScreen extends StatelessWidget {
           const AnimatedSplashBackground(),
 
           QuizResultContent(
+            checkpoint: checkpoint,
             title: 'Hasil Kuis',
             score: score,
             totalCount: totalCount,

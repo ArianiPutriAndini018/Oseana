@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../models/island_checkpoint_model.dart';
 import '../quiz/quiz_header.dart';
 import 'quiz_result_card.dart';
 
 class QuizResultContent extends StatelessWidget {
+  final IslandCheckpointModel checkpoint;
   final String title;
   final int score;
   final int totalCount;
@@ -14,6 +16,7 @@ class QuizResultContent extends StatelessWidget {
 
   const QuizResultContent({
     super.key,
+    required this.checkpoint,
     required this.title,
     required this.score,
     required this.totalCount,
@@ -58,6 +61,7 @@ class QuizResultContent extends StatelessWidget {
             SizedBox(height: isSmall ? 46 : 52),
 
             QuizResultCard(
+              checkpoint: checkpoint,
               title: title,
               score: score,
               totalCount: totalCount,

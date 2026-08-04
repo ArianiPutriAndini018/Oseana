@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_radius.dart';
 import '../../core/constants/app_shadows.dart';
+import '../../models/island_checkpoint_model.dart';
 import '../quiz/quiz_title_badge.dart';
 import 'quiz_result_action_buttons.dart';
 import 'quiz_result_failed_content.dart';
 import 'quiz_result_success_content.dart';
 
 class QuizResultCard extends StatelessWidget {
+  final IslandCheckpointModel checkpoint;
   final String title;
   final int score;
   final int totalCount;
@@ -21,6 +23,7 @@ class QuizResultCard extends StatelessWidget {
 
   const QuizResultCard({
     super.key,
+    required this.checkpoint,
     required this.title,
     required this.score,
     required this.totalCount,
@@ -87,6 +90,7 @@ class QuizResultCard extends StatelessWidget {
             children: [
               if (isPerfectScore)
                 QuizResultSuccessContent(
+                  checkpoint: checkpoint,
                   scorePercentage: _scorePercentage,
                   xpReward: xpReward,
                   scoreColor: _scoreGreen,
