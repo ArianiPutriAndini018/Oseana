@@ -10,17 +10,24 @@ class ProfileData {
   static const String userId = 'user_001';
 
   static const String userName = 'Penjelajah';
+
   static const String avatar = AppImages.avatarCrab;
 
   static const String level = 'Level 1';
+
   static const int levelNumber = 1;
+
   static const String title = 'Penjelajah Pemula';
 
   static const int xp = 0;
-  static const int maxXp = 150;
+
+  static const int maxXp = 180;
 
   static double get xpProgressValue {
-    if (maxXp <= 0) return 0;
+    if (maxXp <= 0) {
+      return 0;
+    }
+
     return xp / maxXp;
   }
 
@@ -28,7 +35,7 @@ class ProfileData {
     return (xpProgressValue * 100).round();
   }
 
-  static List<ProfileStatModel> topStats = [
+  static const List<ProfileStatModel> topStats = [
     ProfileStatModel(
       id: 'islands_learned',
       title: 'Pulau Dipelajari',
@@ -64,7 +71,8 @@ class ProfileData {
       title: 'Misi Selesai',
       value: '0/15',
       iconKey: 'mission',
-      iconAsset: AppImages.profileMissionCompleteIcon,
+      iconAsset:
+          AppImages.profileMissionCompleteIcon,
       fallbackIcon: Icons.fact_check_rounded,
       fallbackIconColor: Color(0xFF00A84F),
       order: 4,
@@ -78,14 +86,15 @@ class ProfileData {
       value: '0/16',
       iconKey: 'badge',
       iconAsset: AppImages.profileBadgeIcon,
-      fallbackIcon: Icons.workspace_premium_rounded,
+      fallbackIcon:
+          Icons.workspace_premium_rounded,
       fallbackIconColor: Color(0xFFFFB703),
       order: 1,
     ),
     ProfileStatModel(
       id: 'stamps_collected',
       title: 'Stamp Terkumpul',
-      value: '0/9',
+      value: '0/7',
       iconKey: 'stamp',
       iconAsset: AppImages.profileStampIcon,
       fallbackIcon: Icons.approval_rounded,
@@ -122,20 +131,50 @@ class ProfileData {
   ];
 
   static List<ProfileStatModel> get orderedTopStats {
-    final result = [...topStats];
-    result.sort((a, b) => a.order.compareTo(b.order));
+    final result = List<ProfileStatModel>.from(
+      topStats,
+    );
+
+    result.sort(
+      (first, second) {
+        return first.order.compareTo(
+          second.order,
+        );
+      },
+    );
+
     return result;
   }
 
   static List<ProfileStatModel> get orderedBottomStats {
-    final result = [...bottomStats];
-    result.sort((a, b) => a.order.compareTo(b.order));
+    final result = List<ProfileStatModel>.from(
+      bottomStats,
+    );
+
+    result.sort(
+      (first, second) {
+        return first.order.compareTo(
+          second.order,
+        );
+      },
+    );
+
     return result;
   }
 
   static List<ProfileMenuModel> get orderedMenus {
-    final result = [...menus];
-    result.sort((a, b) => a.order.compareTo(b.order));
+    final result = List<ProfileMenuModel>.from(
+      menus,
+    );
+
+    result.sort(
+      (first, second) {
+        return first.order.compareTo(
+          second.order,
+        );
+      },
+    );
+
     return result;
   }
 }

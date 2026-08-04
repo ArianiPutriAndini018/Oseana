@@ -55,43 +55,66 @@ class IslandCheckpointContent extends StatelessWidget {
                 height: 1.15,
               ),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(
+              height: 22,
+            ),
             CheckpointBanner(
               image: checkpoint.bannerImage,
               height: isSmall ? 138 : 142,
             ),
-            const SizedBox(height: 22),
+            const SizedBox(
+              height: 22,
+            ),
             CheckpointProgressCard(
               title: checkpoint.progressTitle,
               progress: checkpoint.progress,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(
+              height: 24,
+            ),
             CheckpointBiotaGrid(
               biotas: checkpoint.biotas,
               title: checkpoint.biotaSectionTitle,
             ),
-            const SizedBox(height: 26),
+            const SizedBox(
+              height: 26,
+            ),
+
+            // Aquarium Mode hanya menampilkan
+            // Scan QR dan kode manual.
             if (isAquariumMode) ...[
               PrimaryButton(
                 text: checkpoint.scanButtonText,
                 icon: Icons.qr_code_scanner_rounded,
                 onPressed: onScanQrPressed,
               ),
-              const SizedBox(height: 28),
+              const SizedBox(
+                height: 28,
+              ),
               CheckpointManualCodeInput(
                 controller: manualCodeController,
                 label: checkpoint.manualInputLabel,
                 hintText: checkpoint.manualCodeHint,
                 onSubmitted: onManualCodeSubmitted,
               ),
-              const SizedBox(height: 28),
+              const SizedBox(
+                height: 28,
+              ),
             ],
-            PrimaryButton(
-              text: 'Pelajari',
-              icon: Icons.menu_book_rounded,
-              onPressed: onLearnPressed,
-            ),
-            const SizedBox(height: 18),
+
+            // Tombol Pelajari hanya muncul
+            // pada Explore Mode.
+            if (!isAquariumMode) ...[
+              PrimaryButton(
+                text: 'Pelajari',
+                icon: Icons.menu_book_rounded,
+                onPressed: onLearnPressed,
+              ),
+              const SizedBox(
+                height: 18,
+              ),
+            ],
+
             InfoCard(
               text: checkpoint.infoText,
               icon: Icons.info_rounded,

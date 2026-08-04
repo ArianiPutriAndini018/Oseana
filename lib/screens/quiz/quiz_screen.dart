@@ -5,63 +5,75 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/controllers/audio_controller.dart';
+import '../../core/controllers/user_profile_controller.dart';
+import '../../core/routes/ocean_page_route.dart';
+import '../../core/services/auth_service.dart';
 import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
 import '../../data/quiz_data.dart';
-import '../../data/repositories/quiz_repository.dart';
 import '../../data/repositories/badge_unlock_service.dart';
+import '../../data/repositories/quiz_repository.dart';
 import '../../data/sea_passport_data.dart';
-import '../../core/services/auth_service.dart';
 import '../../models/island_checkpoint_model.dart';
+import '../../models/learning_mode_type.dart';
 import '../../models/quiz_question_model.dart';
-import '../../core/controllers/user_profile_controller.dart';
 import '../../widgets/backgrounds/animated_splash_background.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
-import '../../widgets/quiz/quiz_content.dart';
 import '../../widgets/passport/badge_unlocked_dialog.dart';
+import '../../widgets/quiz/quiz_content.dart';
 import 'quiz_result_screen.dart';
-import '../../core/routes/ocean_page_route.dart';
 
 class QuizScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
+  final LearningModeType learningMode;
 
   const QuizScreen({
     super.key,
     required this.checkpoint,
+    this.learningMode = LearningModeType.explore,
   });
 
   @override
-  State<QuizScreen> createState() => _QuizScreenState();
+  State<QuizScreen> createState() {
+    return _QuizScreenState();
+  }
 }
 
-class _QuizScreenState extends State<QuizScreen> {
+class _QuizScreenState
+    extends State<QuizScreen> {
   static const int _bottomNavIndex = 1;
 
   List<QuizQuestionModel>? _questions;
+
   bool _isLoading = true;
+  bool _showResult = false;
+  bool _isFinishing = false;
 
   int _currentQuestionIndex = 0;
   int _score = 0;
   int? _selectedAnswerIndex;
 
-  bool _showResult = false;
-  bool _isFinishing = false;
-
   QuizQuestionModel get _currentQuestion {
-    return _questions![_currentQuestionIndex];
+    return _questions![
+        _currentQuestionIndex];
   }
 
   bool get _isLastQuestion {
-    return _currentQuestionIndex == _questions!.length - 1;
+    return _currentQuestionIndex ==
+        _questions!.length - 1;
   }
 
   bool get _canContinue {
-    return _selectedAnswerIndex != null && _showResult;
+    return _selectedAnswerIndex != null &&
+        _showResult;
   }
 
   String get _buttonText {
-    if (_isLastQuestion) return 'Selesai';
+    if (_isLastQuestion) {
+      return 'Selesai';
+    }
+
     return 'Selanjutnya';
   }
 
@@ -70,43 +82,69 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   bool get _isPerfectScore {
-    return _score == _questions!.length;
+    return _score ==
+        _questions!.length;
   }
 
   @override
   void initState() {
     super.initState();
+
     _loadQuestions();
   }
 
   Future<void> _loadQuestions() async {
     try {
-      final dbQuestions = await QuizRepository().getQuestionsByIslandId(widget.checkpoint.islandId);
+      final dbQuestions =
+          await QuizRepository()
+              .getQuestionsByIslandId(
+        widget.checkpoint.islandId,
+      );
+
       if (dbQuestions.isNotEmpty) {
         _questions = dbQuestions;
       } else {
-        _questions = QuizData.findByIslandId(widget.checkpoint.islandId);
-      }
-    } catch (e) {
-      _questions = QuizData.findByIslandId(widget.checkpoint.islandId);
-    }
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (_questions != null && _questions!.isNotEmpty) {
-        unawaited(
-          AudioController.instance.playQuizMusic(),
+        _questions =
+            QuizData.findByIslandId(
+          widget.checkpoint.islandId,
         );
       }
+    } catch (e) {
+      _questions =
+          QuizData.findByIslandId(
+        widget.checkpoint.islandId,
+      );
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (_questions != null &&
+        _questions!.isNotEmpty) {
+      unawaited(
+        AudioController.instance
+            .playQuizMusic(),
+      );
     }
   }
 
-  void _onOptionSelected(int index) {
-    if (_showResult || _isFinishing) return;
+  void _onOptionSelected(
+    int index,
+  ) {
+    if (_showResult ||
+        _isFinishing) {
+      return;
+    }
 
-    final isCorrect = _currentQuestion.isCorrect(index);
+    final isCorrect =
+        _currentQuestion.isCorrect(
+      index,
+    );
 
     setState(() {
       _selectedAnswerIndex = index;
@@ -119,13 +157,16 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   void _onNextPressed() {
-    if (_isFinishing) return;
+    if (_isFinishing) {
+      return;
+    }
 
     if (!_canContinue) {
       AppSnackBar.show(
         context,
         'Pilih jawaban terlebih dahulu',
-        backgroundColor: AppColors.warning,
+        backgroundColor:
+            AppColors.warning,
       );
       return;
     }
@@ -147,7 +188,9 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   Future<void> _finishQuiz() async {
-    if (_isFinishing) return;
+    if (_isFinishing) {
+      return;
+    }
 
     setState(() {
       _isFinishing = true;
@@ -155,136 +198,218 @@ class _QuizScreenState extends State<QuizScreen> {
 
     if (_isPerfectScore) {
       unawaited(
-        AudioController.instance.playPerfectStarSound(),
+        AudioController.instance
+            .playPerfectStarSound(),
       );
     } else {
       unawaited(
-        AudioController.instance.playNormalStarSound(),
+        AudioController.instance
+            .playNormalStarSound(),
       );
     }
 
-    CheckpointData.updateProgress(widget.checkpoint.islandId, 1.0);
-    SeaPassportData.unlockStamp(widget.checkpoint.islandId);
+    CheckpointData.updateProgress(
+      widget.checkpoint.islandId,
+      1.0,
+    );
 
-    final user = AuthService().currentUser;
+    SeaPassportData.unlockStamp(
+      widget.checkpoint.islandId,
+    );
+
+    final user =
+        AuthService().currentUser;
+
     if (user != null) {
-      final totalCount = _questions!.length;
-      final scorePercentage = totalCount > 0 ? (_score / totalCount * 100).toInt() : 0;
-      
+      final totalCount =
+          _questions!.length;
+
+      final scorePercentage =
+          totalCount > 0
+              ? (_score /
+                      totalCount *
+                      100)
+                  .toInt()
+              : 0;
+
       int stars = 0;
+
       if (_score == totalCount) {
         stars = 3;
-      } else if (_score >= (totalCount / 2)) {
+      } else if (_score >=
+          totalCount / 2) {
         stars = 2;
       } else if (_score > 0) {
         stars = 1;
       }
 
       try {
-        await QuizRepository().saveQuizResult(
+        await QuizRepository()
+            .saveQuizResult(
           userId: user.id,
-          islandId: widget.checkpoint.islandId,
+          islandId:
+              widget.checkpoint.islandId,
           score: scorePercentage,
           correctAnswers: _score,
           stars: stars,
           xpEarned: 15,
         );
       } catch (e) {
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
+
         AppSnackBar.show(
           context,
           'Error DB: ${e.toString().replaceAll('Exception: ', '')}',
-          backgroundColor: AppColors.error,
+          backgroundColor:
+              AppColors.error,
         );
+
         setState(() {
           _isFinishing = false;
         });
+
         return;
       }
 
       try {
-        final newBadges = await BadgeUnlockService().checkAndUnlockBadges(user.id);
-        if (mounted && newBadges.isNotEmpty) {
-          for (final badge in newBadges) {
-            if (!mounted) break;
-            await BadgeUnlockedDialog.show(
+        final newBadges =
+            await BadgeUnlockService()
+                .checkAndUnlockBadges(
+          user.id,
+        );
+
+        if (mounted &&
+            newBadges.isNotEmpty) {
+          for (final badge
+              in newBadges) {
+            if (!mounted) {
+              break;
+            }
+
+            await BadgeUnlockedDialog
+                .show(
               context,
-              badgeTitle: badge['title'] ?? '',
-              badgeImage: badge['image'] ?? '',
+              badgeTitle:
+                  badge['title'] ?? '',
+              badgeImage:
+                  badge['image'] ?? '',
             );
           }
         }
       } catch (e) {
-        print('Error unlocking badges: $e');
+        debugPrint(
+          'Error unlocking badges: $e',
+        );
+
         if (mounted) {
           AppSnackBar.show(
             context,
             'Error Badge: $e',
-            backgroundColor: AppColors.error,
+            backgroundColor:
+                AppColors.error,
           );
         }
       }
 
-      // Refresh profile stats (XP, level, stars, badges, etc)
-      UserProfileController.instance.loadStats();
+      await UserProfileController
+          .instance
+          .loadStats();
     }
 
-    final updatedCheckpoint = CheckpointData.getCheckpointByIslandId(widget.checkpoint.islandId);
+    final updatedCheckpoint =
+        CheckpointData
+            .getCheckpointByIslandId(
+      widget.checkpoint.islandId,
+    );
 
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     Navigator.pushReplacement(
       context,
       OceanPageRoute(
-        builder: (_) => QuizResultScreen(
-          checkpoint: updatedCheckpoint,
+        builder: (_) =>
+            QuizResultScreen(
+          checkpoint:
+              updatedCheckpoint,
           score: _score,
-          totalCount: _questions!.length,
+          totalCount:
+              _questions!.length,
+          learningMode:
+              widget.learningMode,
         ),
       ),
     );
   }
 
-  void _onBottomNavTap(int index) {
-    if (_isFinishing) return;
+  void _onBottomNavTap(
+    int index,
+  ) {
+    if (_isFinishing) {
+      return;
+    }
 
     HomeBottomNavAction.handle(
       context: context,
       index: index,
-      currentIndex: _bottomNavIndex,
+      currentIndex:
+          _bottomNavIndex,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor:
+          AppColors.primary,
       extendBody: true,
       body: Stack(
         children: [
           const AnimatedSplashBackground(),
+
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(color: AppColors.white),
+              child:
+                  CircularProgressIndicator(
+                color: AppColors.white,
+              ),
             )
-          else if (_questions == null || _questions!.isEmpty)
+          else if (_questions == null ||
+              _questions!.isEmpty)
             const _QuizEmptyState()
           else
             QuizContent(
               title: _quizTitle,
-              question: _currentQuestion,
-              currentIndex: _currentQuestionIndex,
-              totalCount: _questions!.length,
-              selectedAnswerIndex: _selectedAnswerIndex,
-              showResult: _showResult,
-              canContinue: _canContinue,
-              buttonText: _buttonText,
-              onOptionSelected: _onOptionSelected,
-              onNextPressed: _onNextPressed,
+              question:
+                  _currentQuestion,
+              currentIndex:
+                  _currentQuestionIndex,
+              totalCount:
+                  _questions!.length,
+              selectedAnswerIndex:
+                  _selectedAnswerIndex,
+              showResult:
+                  _showResult,
+              canContinue:
+                  _canContinue,
+              buttonText:
+                  _buttonText,
+              onOptionSelected:
+                  _onOptionSelected,
+              onNextPressed:
+                  _onNextPressed,
             ),
+
           FloatingHomeBottomNav(
-            currentIndex: _bottomNavIndex,
-            onTap: _onBottomNavTap,
+            currentIndex:
+                _bottomNavIndex,
+            onTap:
+                _onBottomNavTap,
           ),
         ],
       ),
@@ -292,21 +417,31 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 }
 
-class _QuizEmptyState extends StatelessWidget {
+class _QuizEmptyState
+    extends StatelessWidget {
   const _QuizEmptyState();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
+        padding:
+            const EdgeInsets.symmetric(
+          horizontal: 28,
+        ),
         child: Text(
           'Quiz belum tersedia',
-          textAlign: TextAlign.center,
-          style: AppTextStyles.bodySmall.copyWith(
+          textAlign:
+              TextAlign.center,
+          style:
+              AppTextStyles.bodySmall
+                  .copyWith(
             color: AppColors.white,
             fontSize: 13,
-            fontWeight: FontWeight.w700,
+            fontWeight:
+                FontWeight.w700,
           ),
         ),
       ),

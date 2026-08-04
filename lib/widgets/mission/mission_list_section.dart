@@ -75,7 +75,7 @@ class _MissionListSectionState extends State<MissionListSection> {
         Text(
           'Daftar Misi',
           style: AppTextStyles.bodyLarge.copyWith(
-            color: AppColors.blueDark,
+            color: Colors.white,
             fontSize: isSmall ? 20 : 23,
             fontWeight: FontWeight.w900,
             height: 1,

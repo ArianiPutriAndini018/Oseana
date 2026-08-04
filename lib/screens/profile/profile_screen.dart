@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../auth/welcome_screen.dart';
-
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_images.dart';
 import '../../core/routes/app_routes.dart';
+import '../../core/routes/ocean_page_route.dart';
 import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../../widgets/profile/profile_content.dart';
-import '../../core/routes/ocean_page_route.dart';
+import '../auth/welcome_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final bool openedFromBottomNav;
@@ -21,13 +21,16 @@ class ProfileScreen extends StatelessWidget {
 
   static const int _bottomNavIndex = 4;
 
-  void _handleBack(BuildContext context) {
+  void _handleBack(
+    BuildContext context,
+  ) {
     if (openedFromBottomNav) {
       Navigator.pushNamedAndRemoveUntil(
         context,
         AppRoutes.home,
         (route) => false,
       );
+
       return;
     }
 
@@ -54,7 +57,9 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _handleEditProfile(BuildContext context) {
+  void _handleEditProfile(
+    BuildContext context,
+  ) {
     Navigator.pushNamed(
       context,
       AppRoutes.editProfile,
@@ -73,13 +78,23 @@ class ProfileScreen extends StatelessWidget {
           context,
           AppRoutes.settings,
         );
+
         return;
+
       case 'faq':
-        Navigator.pushNamed(context, AppRoutes.faq);
+        Navigator.pushNamed(
+          context,
+          AppRoutes.faq,
+        );
+
         return;
 
       case 'about':
-        Navigator.pushNamed(context, AppRoutes.aboutOseana);
+        Navigator.pushNamed(
+          context,
+          AppRoutes.aboutOseana,
+        );
+
         return;
 
       default:
@@ -94,39 +109,73 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _handleLogout(BuildContext context) {
+  void _handleLogout(
+    BuildContext context,
+  ) {
     Navigator.pushAndRemoveUntil(
       context,
       OceanPageRoute(
-        builder: (_) => const WelcomeScreen(),
+        builder: (_) =>
+            const WelcomeScreen(),
       ),
       (route) => false,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.white,
+      extendBody: true,
       body: Stack(
         children: [
-          ProfileContent(
-            onEditProfile: () => _handleEditProfile(context),
-            onMenuTap: (menuId) => _handleMenuTap(
-              context,
-              menuId,
+          Positioned.fill(
+            child: Image.asset(
+              AppImages.backgroundSplash,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
             ),
-            onLogout: () => _handleLogout(context),
           ),
+
+          Positioned.fill(
+            child: ColoredBox(
+              color: Colors.white.withOpacity(
+                0.18,
+              ),
+            ),
+          ),
+
+          ProfileContent(
+            onEditProfile: () {
+              _handleEditProfile(context);
+            },
+            onMenuTap: (menuId) {
+              _handleMenuTap(
+                context,
+                menuId,
+              );
+            },
+            onLogout: () {
+              _handleLogout(context);
+            },
+          ),
+
           ScreenBackButton(
-            onPressed: () => _handleBack(context),
+            onPressed: () {
+              _handleBack(context);
+            },
           ),
+
           FloatingHomeBottomNav(
             currentIndex: _bottomNavIndex,
-            onTap: (index) => _handleBottomNavTap(
-              context,
-              index,
-            ),
+            onTap: (index) {
+              _handleBottomNavTap(
+                context,
+                index,
+              );
+            },
           ),
         ],
       ),

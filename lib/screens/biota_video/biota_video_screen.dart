@@ -2,36 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/routes/ocean_page_route.dart';
 import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../core/utils/youtube_video_id_helper.dart';
 import '../../models/biota_model.dart';
 import '../../models/island_checkpoint_model.dart';
+import '../../models/learning_mode_type.dart';
 import '../../widgets/backgrounds/animated_splash_background.dart';
 import '../../widgets/biota_video/biota_video_content.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../quiz/quiz_screen.dart';
-import '../../core/routes/ocean_page_route.dart';
 
 class BiotaVideoScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
   final BiotaModel biota;
+  final LearningModeType learningMode;
 
   const BiotaVideoScreen({
     super.key,
     required this.checkpoint,
     required this.biota,
+    this.learningMode = LearningModeType.explore,
   });
 
   @override
-  State<BiotaVideoScreen> createState() => _BiotaVideoScreenState();
+  State<BiotaVideoScreen> createState() {
+    return _BiotaVideoScreenState();
+  }
 }
 
-class _BiotaVideoScreenState extends State<BiotaVideoScreen> {
+class _BiotaVideoScreenState
+    extends State<BiotaVideoScreen> {
   static const int _currentIndex = 1;
 
-  YoutubePlayerController? _youtubeController;
+  YoutubePlayerController?
+      _youtubeController;
 
   bool get _hasVideo {
     return _youtubeController != null;
@@ -45,16 +52,21 @@ class _BiotaVideoScreenState extends State<BiotaVideoScreen> {
   }
 
   void _initializeYoutubePlayer() {
-    final videoId = YoutubeVideoIdHelper.resolve(
+    final videoId =
+        YoutubeVideoIdHelper.resolve(
       widget.biota.videoUrl,
     );
 
-    if (videoId == null) return;
+    if (videoId == null) {
+      return;
+    }
 
-    _youtubeController = YoutubePlayerController.fromVideoId(
+    _youtubeController =
+        YoutubePlayerController.fromVideoId(
       videoId: videoId,
       autoPlay: false,
-      params: const YoutubePlayerParams(
+      params:
+          const YoutubePlayerParams(
         mute: false,
         enableCaption: true,
         showControls: true,
@@ -74,7 +86,9 @@ class _BiotaVideoScreenState extends State<BiotaVideoScreen> {
 
   void _onWatchVideoPressed() {
     if (!_hasVideo) {
-      _showSnackBar('Video biota belum tersedia');
+      _showSnackBar(
+        'Video biota belum tersedia',
+      );
       return;
     }
 
@@ -82,19 +96,27 @@ class _BiotaVideoScreenState extends State<BiotaVideoScreen> {
   }
 
   void _onLearnOtherPressed() {
-    Navigator.pop(context);
+    Navigator.pop(
+      context,
+    );
   }
 
   void _onQuizPressed() {
     Navigator.push(
       context,
       OceanPageRoute(
-        builder: (_) => QuizScreen(checkpoint: widget.checkpoint),
+        builder: (_) => QuizScreen(
+          checkpoint: widget.checkpoint,
+          learningMode:
+              widget.learningMode,
+        ),
       ),
     );
   }
 
-  void _onBottomNavTap(int index) {
+  void _onBottomNavTap(
+    int index,
+  ) {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
@@ -102,8 +124,12 @@ class _BiotaVideoScreenState extends State<BiotaVideoScreen> {
     );
   }
 
-  void _showSnackBar(String message) {
-    if (!mounted) return;
+  void _showSnackBar(
+    String message,
+  ) {
+    if (!mounted) {
+      return;
+    }
 
     AppSnackBar.show(
       context,
@@ -112,7 +138,9 @@ class _BiotaVideoScreenState extends State<BiotaVideoScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.primary,
       extendBody: true,
@@ -121,10 +149,14 @@ class _BiotaVideoScreenState extends State<BiotaVideoScreen> {
           const AnimatedSplashBackground(),
           BiotaVideoContent(
             biota: widget.biota,
-            youtubeController: _youtubeController,
-            onWatchVideoPressed: _onWatchVideoPressed,
-            onLearnOtherPressed: _onLearnOtherPressed,
-            onQuizPressed: _onQuizPressed,
+            youtubeController:
+                _youtubeController,
+            onWatchVideoPressed:
+                _onWatchVideoPressed,
+            onLearnOtherPressed:
+                _onLearnOtherPressed,
+            onQuizPressed:
+                _onQuizPressed,
           ),
           const ScreenBackButton(),
           FloatingHomeBottomNav(

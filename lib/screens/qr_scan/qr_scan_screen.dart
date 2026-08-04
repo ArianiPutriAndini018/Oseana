@@ -2,32 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/routes/ocean_page_route.dart';
 import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../models/island_checkpoint_model.dart';
+import '../../models/learning_mode_type.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../../widgets/qr_scan/qr_scan_content.dart';
 import '../island_detail/island_detail_screen.dart';
-import '../../core/routes/ocean_page_route.dart';
 
 class QrScanScreen extends StatefulWidget {
   final IslandCheckpointModel checkpoint;
+  final LearningModeType learningMode;
 
   const QrScanScreen({
     super.key,
     required this.checkpoint,
+    this.learningMode = LearningModeType.aquarium,
   });
 
   @override
-  State<QrScanScreen> createState() => _QrScanScreenState();
+  State<QrScanScreen> createState() {
+    return _QrScanScreenState();
+  }
 }
 
-class _QrScanScreenState extends State<QrScanScreen> {
+class _QrScanScreenState
+    extends State<QrScanScreen> {
   static const int _currentIndex = 1;
 
-  late final MobileScannerController _scannerController;
-  late final TextEditingController _manualCodeController;
+  late final MobileScannerController
+      _scannerController;
+
+  late final TextEditingController
+      _manualCodeController;
 
   bool _isHandlingCode = false;
 
@@ -35,13 +44,16 @@ class _QrScanScreenState extends State<QrScanScreen> {
   void initState() {
     super.initState();
 
-    _manualCodeController = TextEditingController();
+    _manualCodeController =
+        TextEditingController();
 
-    _scannerController = MobileScannerController(
+    _scannerController =
+        MobileScannerController(
       formats: const [
         BarcodeFormat.qrCode,
       ],
-      detectionSpeed: DetectionSpeed.normal,
+      detectionSpeed:
+          DetectionSpeed.normal,
       detectionTimeoutMs: 100,
     );
   }
@@ -54,27 +66,54 @@ class _QrScanScreenState extends State<QrScanScreen> {
     super.dispose();
   }
 
-  void _onQrDetected(BarcodeCapture capture) {
-    if (_isHandlingCode) return;
-    if (capture.barcodes.isEmpty) return;
+  void _onQrDetected(
+    BarcodeCapture capture,
+  ) {
+    if (_isHandlingCode) {
+      return;
+    }
 
-    for (final barcode in capture.barcodes) {
-      final qrValue = barcode.rawValue?.trim();
+    if (capture.barcodes.isEmpty) {
+      return;
+    }
 
-      if (qrValue == null || qrValue.isEmpty) continue;
+    for (final barcode
+        in capture.barcodes) {
+      final qrValue =
+          barcode.rawValue?.trim();
 
-      debugPrint('QR terbaca: $qrValue');
+      if (qrValue == null ||
+          qrValue.isEmpty) {
+        continue;
+      }
 
-      _handleCode(qrValue);
+      debugPrint(
+        'QR terbaca: $qrValue',
+      );
+
+      _handleCode(
+        qrValue,
+      );
+
       break;
     }
   }
 
-  Future<void> _handleCode(String value) async {
-    if (_isHandlingCode) return;
+  Future<void> _handleCode(
+    String value,
+  ) async {
+    if (_isHandlingCode) {
+      return;
+    }
 
-    final inputCode = value.trim().toUpperCase();
-    final validCode = widget.checkpoint.checkpointCode.trim().toUpperCase();
+    final inputCode =
+        value.trim().toUpperCase();
+
+    final validCode = widget
+        .checkpoint
+        .checkpointCode
+        .trim()
+        .toUpperCase();
 
     if (inputCode.isEmpty) {
       _showSnackBar(
@@ -95,10 +134,14 @@ class _QrScanScreenState extends State<QrScanScreen> {
       );
 
       await Future.delayed(
-        const Duration(milliseconds: 1200),
+        const Duration(
+          milliseconds: 1200,
+        ),
       );
 
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       setState(() {
         _isHandlingCode = false;
@@ -109,13 +152,16 @@ class _QrScanScreenState extends State<QrScanScreen> {
 
     await _scannerController.stop();
 
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     Navigator.pushReplacement(
       context,
       OceanPageRoute(
         builder: (_) => IslandDetailScreen(
           checkpoint: widget.checkpoint,
+          learningMode: widget.learningMode,
         ),
       ),
     );
@@ -127,7 +173,9 @@ class _QrScanScreenState extends State<QrScanScreen> {
     );
   }
 
-  void _onBottomNavTap(int index) {
+  void _onBottomNavTap(
+    int index,
+  ) {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
@@ -139,7 +187,9 @@ class _QrScanScreenState extends State<QrScanScreen> {
     String message,
     Color backgroundColor,
   ) {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     AppSnackBar.show(
       context,
@@ -149,7 +199,9 @@ class _QrScanScreenState extends State<QrScanScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.surface,
       extendBody: true,
@@ -157,12 +209,17 @@ class _QrScanScreenState extends State<QrScanScreen> {
         children: [
           QrScanContent(
             checkpoint: widget.checkpoint,
-            scannerController: _scannerController,
-            manualCodeController: _manualCodeController,
-            isHandlingCode: _isHandlingCode,
+            scannerController:
+                _scannerController,
+            manualCodeController:
+                _manualCodeController,
+            isHandlingCode:
+                _isHandlingCode,
             onQrDetected: _onQrDetected,
-            onManualCodeSubmitted: _handleCode,
-            onOpenPressed: _onOpenPressed,
+            onManualCodeSubmitted:
+                _handleCode,
+            onOpenPressed:
+                _onOpenPressed,
           ),
           const ScreenBackButton(),
           FloatingHomeBottomNav(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/routes/ocean_page_route.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../models/island_checkpoint_model.dart';
+import '../../models/learning_mode_type.dart';
 import '../../widgets/backgrounds/animated_splash_background.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
@@ -11,13 +13,13 @@ import '../../widgets/quiz_result/quiz_result_content.dart';
 import '../map/map_screen.dart';
 import '../progress/update_progress_screen.dart';
 import 'quiz_screen.dart';
-import '../../core/routes/ocean_page_route.dart';
 
 class QuizResultScreen extends StatelessWidget {
   final IslandCheckpointModel checkpoint;
   final int score;
   final int totalCount;
   final int xpReward;
+  final LearningModeType learningMode;
 
   const QuizResultScreen({
     super.key,
@@ -25,58 +27,77 @@ class QuizResultScreen extends StatelessWidget {
     required this.score,
     required this.totalCount,
     this.xpReward = 15,
+    this.learningMode = LearningModeType.explore,
   });
 
   static const int _bottomNavIndex = 1;
 
   bool get _isPerfectScore {
-    return totalCount > 0 && score == totalCount;
+    return totalCount > 0 &&
+        score == totalCount;
   }
 
-  void _onPassportPressed(BuildContext context) {
+  void _onPassportPressed(
+    BuildContext context,
+  ) {
     Navigator.pushReplacement(
       context,
       OceanPageRoute(
-        builder: (_) => UpdateProgressScreen(
+        builder: (_) =>
+            UpdateProgressScreen(
           checkpoint: checkpoint,
         ),
       ),
     );
   }
 
-  void _onRetryPressed(BuildContext context) {
+  void _onRetryPressed(
+    BuildContext context,
+  ) {
     Navigator.pushReplacement(
       context,
       OceanPageRoute(
         builder: (_) => QuizScreen(
           checkpoint: checkpoint,
+          learningMode: learningMode,
         ),
       ),
     );
   }
 
-  void _onBackToMapPressed(BuildContext context) {
+  void _onBackToMapPressed(
+    BuildContext context,
+  ) {
     Navigator.pushAndRemoveUntil(
       context,
       OceanPageRoute(
-        builder: (_) => const MapScreen(),
+        builder: (_) => MapScreen(
+          learningMode: learningMode,
+        ),
       ),
-      (route) => route.isFirst,
+      (route) => false,
     );
   }
 
-  void _onBottomNavTap(BuildContext context, int index) {
+  void _onBottomNavTap(
+    BuildContext context,
+    int index,
+  ) {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
-      currentIndex: _bottomNavIndex,
+      currentIndex:
+          _bottomNavIndex,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor:
+          AppColors.primary,
       extendBody: true,
       body: Stack(
         children: [
@@ -88,20 +109,39 @@ class QuizResultScreen extends StatelessWidget {
             score: score,
             totalCount: totalCount,
             xpReward: xpReward,
-            onPassportPressed: () => _onPassportPressed(context),
-            onRetryPressed: () => _onRetryPressed(context),
-            onBackToMapPressed: () => _onBackToMapPressed(context),
+            onPassportPressed: () {
+              _onPassportPressed(
+                context,
+              );
+            },
+            onRetryPressed: () {
+              _onRetryPressed(
+                context,
+              );
+            },
+            onBackToMapPressed: () {
+              _onBackToMapPressed(
+                context,
+              );
+            },
           ),
 
           QuizResultConfetti(
-            isActive: _isPerfectScore,
+            isActive:
+                _isPerfectScore,
           ),
 
           const ScreenBackButton(),
 
           FloatingHomeBottomNav(
-            currentIndex: _bottomNavIndex,
-            onTap: (index) => _onBottomNavTap(context, index),
+            currentIndex:
+                _bottomNavIndex,
+            onTap: (index) {
+              _onBottomNavTap(
+                context,
+                index,
+              );
+            },
           ),
         ],
       ),

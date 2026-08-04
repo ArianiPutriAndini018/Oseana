@@ -13,27 +13,50 @@ class MapLevelContent extends StatelessWidget {
     required this.isSmall,
   });
 
+  String get _levelTitle {
+    switch (level) {
+      case 5:
+        return 'Master Oceana';
+
+      case 4:
+        return 'Penjaga Samudra';
+
+      case 3:
+        return 'Explorer Oceana';
+
+      case 2:
+        return 'Penjelajah Laut';
+
+      case 1:
+      default:
+        return 'Penjelajah Pemula';
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return SizedBox(
-      width: isSmall ? 78 : 86,
+      width: isSmall ? 102 : 118,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Explorer',
-            maxLines: 1,
-            softWrap: false,
+            _levelTitle,
+            maxLines: 2,
             textAlign: TextAlign.center,
-            overflow: TextOverflow.visible,
+            overflow: TextOverflow.ellipsis,
             style: AppTextStyles.bodyMedium.copyWith(
-              fontSize: isSmall ? 14 : 16,
-              fontWeight: FontWeight.w600,
+              fontSize: isSmall ? 11 : 12,
+              fontWeight: FontWeight.w700,
               color: AppColors.primary,
-              height: 1,
+              height: 1.05,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(
+            height: 6,
+          ),
           Text(
             'Lv.$level',
             maxLines: 1,

@@ -17,22 +17,51 @@ class UserProfileModel {
     required this.maxXp,
   });
 
-  factory UserProfileModel.fromJson(Map<String, dynamic> json) {
+  factory UserProfileModel.fromJson(
+    Map<String, dynamic> json,
+  ) {
     return UserProfileModel(
       id: json['id']?.toString() ?? '',
-      username: json['username']?.toString() ?? 'Penjelajah',
-      avatar: json['avatar']?.toString() ?? '',
-      levelNumber: _asInt(json['level_number']),
-      title: json['title']?.toString() ?? 'Pemula',
-      xp: _asInt(json['xp']),
-      maxXp: _asInt(json['max_xp'], defaultValue: 100),
+      username:
+          json['username']?.toString() ??
+              'Penjelajah',
+      avatar:
+          json['avatar']?.toString() ?? '',
+      levelNumber: _asInt(
+        json['level_number'],
+        defaultValue: 1,
+      ),
+      title:
+          json['title']?.toString() ??
+              'Penjelajah Pemula',
+      xp: _asInt(
+        json['xp'],
+        defaultValue: 0,
+      ),
+      maxXp: _asInt(
+        json['max_xp'],
+        defaultValue: 180,
+      ),
     );
   }
 
-  static int _asInt(dynamic value, {int defaultValue = 0}) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    if (value is String) return int.tryParse(value) ?? defaultValue;
+  static int _asInt(
+    dynamic value, {
+    int defaultValue = 0,
+  }) {
+    if (value is int) {
+      return value;
+    }
+
+    if (value is num) {
+      return value.toInt();
+    }
+
+    if (value is String) {
+      return int.tryParse(value) ??
+          defaultValue;
+    }
+
     return defaultValue;
   }
 }

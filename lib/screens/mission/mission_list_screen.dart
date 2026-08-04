@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/routes/app_routes.dart';
+import '../../core/constants/app_images.dart';
 import '../../core/controllers/mission_controller.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
-import '../../core/utils/app_snack_bar.dart';
 import '../../widgets/mission/mission_list_section.dart';
 import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../../widgets/passport/badge_unlocked_dialog.dart';
 
 class MissionListScreen extends StatelessWidget {
-  const MissionListScreen({super.key});
+  const MissionListScreen({
+    super.key,
+  });
 
   static const int _bottomNavIndex = 3;
 
-  void _handleBack(BuildContext context) {
+  void _handleBack(
+    BuildContext context,
+  ) {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
       return;
@@ -28,7 +32,10 @@ class MissionListScreen extends StatelessWidget {
     );
   }
 
-  void _handleBottomNavTap(BuildContext context, int index) {
+  void _handleBottomNavTap(
+    BuildContext context,
+    int index,
+  ) {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
@@ -37,8 +44,12 @@ class MissionListScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
+  Widget build(
+    BuildContext context,
+  ) {
+    final width =
+        MediaQuery.sizeOf(context).width;
+
     final isSmall = width < 380;
 
     return Scaffold(
@@ -46,17 +57,39 @@ class MissionListScreen extends StatelessWidget {
       extendBody: true,
       body: Stack(
         children: [
+          Positioned.fill(
+            child: Image.asset(
+              AppImages.backgroundSplash,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
+          ),
+
+          Positioned.fill(
+            child: ColoredBox(
+              color: Colors.white.withOpacity(
+                0.18,
+              ),
+            ),
+          ),
+
           SizedBox.expand(
             child: SafeArea(
               bottom: false,
               child: AnimatedBuilder(
-                animation: MissionController.instance,
-                builder: (context, _) {
-                  final controller = MissionController.instance;
+                animation:
+                    MissionController.instance,
+                builder: (
+                  context,
+                  child,
+                ) {
+                  final controller =
+                      MissionController.instance;
 
                   if (controller.isLoading) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child:
+                          CircularProgressIndicator(),
                     );
                   }
 
@@ -68,37 +101,63 @@ class MissionListScreen extends StatelessWidget {
                       150,
                     ),
                     child: MissionListSection(
-                      missions: controller.orderedMissions,
-                      onMissionDone: (mission, btnContext) async {
-                        final newBadges = await controller.completeMission(mission.id);
-                        if (btnContext.mounted && newBadges.isNotEmpty) {
-                          for (final badge in newBadges) {
-                            if (!btnContext.mounted) break;
-                            await BadgeUnlockedDialog.show(
-                              btnContext,
-                              badgeTitle: badge['title'] ?? '',
-                              badgeImage: badge['image'] ?? '',
-                            );
+                      missions:
+                          controller.orderedMissions,
+                      onMissionDone: (
+                        mission,
+                        buttonContext,
+                      ) async {
+                        final newBadges =
+                            await controller
+                                .completeMission(
+                          mission.id,
+                        );
+
+                        if (!buttonContext.mounted) {
+                          return;
+                        }
+
+                        if (newBadges.isEmpty) {
+                          return;
+                        }
+
+                        for (final badge
+                            in newBadges) {
+                          if (!buttonContext.mounted) {
+                            break;
                           }
+
+                          await BadgeUnlockedDialog
+                              .show(
+                            buttonContext,
+                            badgeTitle:
+                                badge['title'] ?? '',
+                            badgeImage:
+                                badge['image'] ?? '',
+                          );
                         }
                       },
                     ),
                   );
-                }
+                },
               ),
             ),
           ),
 
           ScreenBackButton(
-            onPressed: () => _handleBack(context),
+            onPressed: () {
+              _handleBack(context);
+            },
           ),
 
           FloatingHomeBottomNav(
             currentIndex: _bottomNavIndex,
-            onTap: (index) => _handleBottomNavTap(
-              context,
-              index,
-            ),
+            onTap: (index) {
+              _handleBottomNavTap(
+                context,
+                index,
+              );
+            },
           ),
         ],
       ),

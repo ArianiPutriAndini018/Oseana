@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/routes/ocean_page_route.dart';
 import '../../core/utils/app_snack_bar.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
 import '../../data/checkpoint_data.dart';
@@ -12,7 +13,6 @@ import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 import '../island_detail/island_detail_screen.dart';
 import '../qr_scan/qr_scan_screen.dart';
-import '../../core/routes/ocean_page_route.dart';
 
 class IslandCheckpointScreen extends StatefulWidget {
   final IslandModel island;
@@ -25,16 +25,20 @@ class IslandCheckpointScreen extends StatefulWidget {
   });
 
   @override
-  State<IslandCheckpointScreen> createState() => _IslandCheckpointScreenState();
+  State<IslandCheckpointScreen> createState() {
+    return _IslandCheckpointScreenState();
+  }
 }
 
-class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
+class _IslandCheckpointScreenState
+    extends State<IslandCheckpointScreen> {
   static const int _currentIndex = 1;
 
   late final TextEditingController _manualCodeController;
 
   bool get _isAquariumMode {
-    return widget.learningMode == LearningModeType.aquarium;
+    return widget.learningMode ==
+        LearningModeType.aquarium;
   }
 
   IslandCheckpointModel get _checkpoint {
@@ -47,10 +51,14 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
   void initState() {
     super.initState();
 
-    _manualCodeController = TextEditingController();
+    _manualCodeController =
+        TextEditingController();
 
     if (widget.island.stars == 3) {
-      CheckpointData.updateProgress(widget.island.id, 1.0);
+      CheckpointData.updateProgress(
+        widget.island.id,
+        1.0,
+      );
     }
   }
 
@@ -61,11 +69,22 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
   }
 
   void _onLearnPressed() {
+    // Pengaman agar Aquarium Mode
+    // tidak bisa melewati QR.
+    if (_isAquariumMode) {
+      _showSnackBar(
+        'Scan QR atau masukkan kode terlebih dahulu',
+        AppColors.warning,
+      );
+      return;
+    }
+
     Navigator.push(
       context,
       OceanPageRoute(
         builder: (_) => IslandDetailScreen(
           checkpoint: _checkpoint,
+          learningMode: widget.learningMode,
         ),
       ),
     );
@@ -77,14 +96,22 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
       OceanPageRoute(
         builder: (_) => QrScanScreen(
           checkpoint: _checkpoint,
+          learningMode: widget.learningMode,
         ),
       ),
     );
   }
 
-  void _handleManualCodeSubmit(String value) {
-    final inputCode = value.trim().toUpperCase();
-    final validCode = _checkpoint.checkpointCode.trim().toUpperCase();
+  void _handleManualCodeSubmit(
+    String value,
+  ) {
+    final inputCode =
+        value.trim().toUpperCase();
+
+    final validCode = _checkpoint
+        .checkpointCode
+        .trim()
+        .toUpperCase();
 
     if (inputCode.isEmpty) {
       _showSnackBar(
@@ -112,12 +139,15 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
       OceanPageRoute(
         builder: (_) => IslandDetailScreen(
           checkpoint: _checkpoint,
+          learningMode: widget.learningMode,
         ),
       ),
     );
   }
 
-  void _onBottomNavTap(int index) {
+  void _onBottomNavTap(
+    int index,
+  ) {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
@@ -129,7 +159,9 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
     String message,
     Color backgroundColor,
   ) {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     AppSnackBar.show(
       context,
@@ -139,7 +171,9 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.surface,
       extendBody: true,
@@ -148,10 +182,12 @@ class _IslandCheckpointScreenState extends State<IslandCheckpointScreen> {
           IslandCheckpointContent(
             checkpoint: _checkpoint,
             isAquariumMode: _isAquariumMode,
-            manualCodeController: _manualCodeController,
+            manualCodeController:
+                _manualCodeController,
             onLearnPressed: _onLearnPressed,
             onScanQrPressed: _onScanQrPressed,
-            onManualCodeSubmitted: _handleManualCodeSubmit,
+            onManualCodeSubmitted:
+                _handleManualCodeSubmit,
           ),
           const ScreenBackButton(),
           FloatingHomeBottomNav(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../data/profile_data.dart';
@@ -12,123 +14,383 @@ import '../services/auth_service.dart';
 class UserProfileController extends ChangeNotifier {
   UserProfileController._()
       : _userName = ProfileData.userName,
-        _avatar = ProfileData.avatar {
-    loadStats();
+        _avatar = ProfileData.avatar,
+        _topStats = List<ProfileStatModel>.from(
+          ProfileData.orderedTopStats,
+        ),
+        _bottomStats = List<ProfileStatModel>.from(
+          ProfileData.orderedBottomStats,
+        ) {
+    unawaited(
+      loadStats(),
+    );
   }
 
-  static final UserProfileController instance = UserProfileController._();
+  static final UserProfileController instance =
+      UserProfileController._();
+
+  static const int _maximumXp = 180;
+  static const int _totalIslands = 7;
+  static const int _totalStars = 21;
+  static const int _totalBiotas = 21;
+  static const int _totalMissions = 15;
+  static const int _totalBadges = 16;
+  static const int _totalStamps = 7;
 
   String _userName;
   String _avatar;
 
-  int _xp = ProfileData.xp;
-  int _maxXp = ProfileData.maxXp;
-  String _level = ProfileData.level;
-  String _title = ProfileData.title;
-  List<ProfileStatModel> _topStats = ProfileData.orderedTopStats;
-  List<ProfileStatModel> _bottomStats = ProfileData.orderedBottomStats;
+  int _xp = 0;
+  int _maxXp = _maximumXp;
+  int _levelNumber = 1;
+
+  String _level = 'Level 1';
+  String _title = 'Penjelajah Pemula';
+
+  List<ProfileStatModel> _topStats;
+  List<ProfileStatModel> _bottomStats;
 
   Future<void> loadStats() async {
     final user = AuthService().currentUser;
-    if (user != null) {
-      // Load real profile data
-      try {
-        final profile = await ProfileRepository().getProfile(user.id);
-        if (profile != null) {
-          _xp = profile.xp;
-          _maxXp = profile.maxXp;
-          _level = 'Level ${profile.levelNumber}';
-          _title = profile.title;
-          _userName = profile.username;
-          if (profile.avatar.isNotEmpty) _avatar = profile.avatar;
-        }
-      } catch (e) {
-        print('Error loading profile: $e');
+
+    if (user == null) {
+      resetGuestProfile();
+      return;
+    }
+
+    _resetStatistics();
+
+    await _loadProfile(
+      user.id,
+    );
+
+    await _loadBiotaStats(
+      user.id,
+    );
+
+    await _loadStarStats(
+      user.id,
+    );
+
+    await _loadStampStats(
+      user.id,
+    );
+
+    await _loadMissionStats(
+      user.id,
+    );
+
+    await _loadBadgeStats(
+      user.id,
+    );
+
+    notifyListeners();
+  }
+
+  Future<void> _loadProfile(
+    String userId,
+  ) async {
+    try {
+      final profile = await ProfileRepository()
+          .getProfile(
+        userId,
+      );
+
+      if (profile == null) {
+        _xp = 0;
+        _maxXp = _maximumXp;
+        _levelNumber = 1;
+        _level = 'Level 1';
+        _title = 'Penjelajah Pemula';
+        return;
       }
 
-      // Load Biotas Count
-      try {
-        final learnedBiotas = await BiotaRepository().getLearnedBiotasCount(user.id);
-        final topIndex = _topStats.indexWhere((s) => s.id == 'biota_learned');
-        if (topIndex != -1) {
-          _topStats[topIndex] = _topStats[topIndex].copyWith(value: '$learnedBiotas/21');
-        }
-      } catch (e) {
-        print('Error loading learned biotas: $e');
+      _xp = ProfileRepository.normalizeXp(
+        profile.xp,
+      );
+
+      _maxXp = _maximumXp;
+
+      _levelNumber =
+          ProfileRepository.calculateLevelNumber(
+        _xp,
+      );
+
+      _level = 'Level $_levelNumber';
+
+      _title =
+          ProfileRepository.calculateLevelTitle(
+        _xp,
+      );
+
+      _userName = profile.username;
+
+      if (profile.avatar.isNotEmpty) {
+        _avatar = profile.avatar;
       }
-
-      // Load Stars
-      try {
-        final Map<String, dynamic> starsMap = await QuizRepository().getUserStars(user.id);
-        int totalStars = 0;
-        for (final star in starsMap.values) {
-          totalStars += star as int;
-        }
-        final starIndex = _topStats.indexWhere((s) => s.id == 'total_stars');
-        if (starIndex != -1) {
-          _topStats[starIndex] = _topStats[starIndex].copyWith(value: '$totalStars/21');
-        }
-      } catch (e) {
-        print('Error loading stars: $e');
-      }
-
-      // Load Stamps (Islands learned & stamps collected)
-      try {
-        final stamps = await PassportRepository().getStamps(user.id);
-        final unlockedStampsCount = stamps.where((s) => s.isUnlocked).length;
-        
-        final islandIndex = _topStats.indexWhere((s) => s.id == 'islands_learned');
-        if (islandIndex != -1) {
-          _topStats[islandIndex] = _topStats[islandIndex].copyWith(value: '$unlockedStampsCount/7');
-        }
-
-        final stampIndex = _bottomStats.indexWhere((s) => s.id == 'stamps_collected');
-        if (stampIndex != -1) {
-          _bottomStats[stampIndex] = _bottomStats[stampIndex].copyWith(value: '$unlockedStampsCount/9');
-        }
-      } catch (e) {
-        print('Error loading stamps: $e');
-      }
-
-      // Load Missions Done
-      try {
-        final completedMissions = await MissionRepository().getCompletedMissionIds(user.id);
-        final missionIndex = _topStats.indexWhere((s) => s.id == 'missions_done');
-        if (missionIndex != -1) {
-          // Total missions available in MissionData is 15
-          _topStats[missionIndex] = _topStats[missionIndex].copyWith(value: '${completedMissions.length}/15');
-        }
-      } catch (e) {
-        print('Error loading missions done: $e');
-      }
-
-      // Load Badges Earned
-      try {
-        final rewards = await PassportRepository().getRewards(user.id);
-        final unlockedCount = rewards.where((r) => r.isUnlocked).length;
-            
-        final badgeIndex = _bottomStats.indexWhere((s) => s.id == 'badges_earned');
-        if (badgeIndex != -1) {
-          _bottomStats[badgeIndex] = _bottomStats[badgeIndex].copyWith(value: '$unlockedCount/16');
-        }
-      } catch (e) {
-        print('Error loading badges earned: $e');
-      }
-
-      notifyListeners();
+    } catch (e) {
+      debugPrint(
+        'Error loading profile: $e',
+      );
     }
   }
 
-  String get userName => _userName;
-  String get avatar => _avatar;
-  int get xp => _xp;
-  int get maxXp => _maxXp;
-  String get level => _level;
-  String get title => _title;
-  List<ProfileStatModel> get topStats => _topStats;
-  List<ProfileStatModel> get bottomStats => _bottomStats;
+  Future<void> _loadBiotaStats(
+    String userId,
+  ) async {
+    try {
+      final learnedBiotas = await BiotaRepository()
+          .getLearnedBiotasCount(
+        userId,
+      );
 
-  double get xpProgressValue => _maxXp <= 0 ? 0 : _xp / _maxXp;
+      final validCount = learnedBiotas.clamp(
+        0,
+        _totalBiotas,
+      ).toInt();
+
+      _updateTopStat(
+        id: 'biota_learned',
+        value: '$validCount/$_totalBiotas',
+      );
+    } catch (e) {
+      debugPrint(
+        'Error loading learned biotas: $e',
+      );
+    }
+  }
+
+  Future<void> _loadStarStats(
+    String userId,
+  ) async {
+    try {
+      final starsMap = await QuizRepository()
+          .getUserStars(
+        userId,
+      );
+
+      var totalStars = 0;
+
+      for (final stars in starsMap.values) {
+        totalStars += stars.clamp(
+          0,
+          3,
+        ).toInt();
+      }
+
+      final validTotal = totalStars.clamp(
+        0,
+        _totalStars,
+      ).toInt();
+
+      _updateTopStat(
+        id: 'total_stars',
+        value: '$validTotal/$_totalStars',
+      );
+    } catch (e) {
+      debugPrint(
+        'Error loading stars: $e',
+      );
+    }
+  }
+
+  Future<void> _loadStampStats(
+    String userId,
+  ) async {
+    try {
+      final stamps = await PassportRepository()
+          .getStamps(
+        userId,
+      );
+
+      final unlockedIds = stamps
+          .where(
+            (stamp) => stamp.isUnlocked,
+          )
+          .map(
+            (stamp) => _normalizeIslandId(
+              stamp.id,
+            ),
+          )
+          .where(
+            (id) => id.isNotEmpty,
+          )
+          .toSet();
+
+      final unlockedCount = unlockedIds.length.clamp(
+        0,
+        _totalStamps,
+      ).toInt();
+
+      _updateTopStat(
+        id: 'islands_learned',
+        value: '$unlockedCount/$_totalIslands',
+      );
+
+      _updateBottomStat(
+        id: 'stamps_collected',
+        value: '$unlockedCount/$_totalStamps',
+      );
+    } catch (e) {
+      debugPrint(
+        'Error loading stamps: $e',
+      );
+    }
+  }
+
+  Future<void> _loadMissionStats(
+    String userId,
+  ) async {
+    try {
+      final completedMissionIds =
+          await MissionRepository()
+              .getCompletedMissionIds(
+        userId,
+      );
+
+      final completedCount =
+          completedMissionIds.length.clamp(
+        0,
+        _totalMissions,
+      ).toInt();
+
+      _updateTopStat(
+        id: 'missions_done',
+        value: '$completedCount/$_totalMissions',
+      );
+    } catch (e) {
+      debugPrint(
+        'Error loading missions done: $e',
+      );
+    }
+  }
+
+  Future<void> _loadBadgeStats(
+    String userId,
+  ) async {
+    try {
+      final rewards = await PassportRepository()
+          .getRewards(
+        userId,
+      );
+
+      final unlockedCount = rewards
+          .where(
+            (reward) => reward.isUnlocked,
+          )
+          .length
+          .clamp(
+            0,
+            _totalBadges,
+          )
+          .toInt();
+
+      _updateBottomStat(
+        id: 'badges_earned',
+        value: '$unlockedCount/$_totalBadges',
+      );
+    } catch (e) {
+      debugPrint(
+        'Error loading badges earned: $e',
+      );
+    }
+  }
+
+  void _resetStatistics() {
+    _topStats = List<ProfileStatModel>.from(
+      ProfileData.orderedTopStats,
+    );
+
+    _bottomStats = List<ProfileStatModel>.from(
+      ProfileData.orderedBottomStats,
+    );
+  }
+
+  void _updateTopStat({
+    required String id,
+    required String value,
+  }) {
+    final index = _topStats.indexWhere(
+      (stat) => stat.id == id,
+    );
+
+    if (index == -1) {
+      return;
+    }
+
+    _topStats[index] = _topStats[index].copyWith(
+      value: value,
+    );
+  }
+
+  void _updateBottomStat({
+    required String id,
+    required String value,
+  }) {
+    final index = _bottomStats.indexWhere(
+      (stat) => stat.id == id,
+    );
+
+    if (index == -1) {
+      return;
+    }
+
+    _bottomStats[index] =
+        _bottomStats[index].copyWith(
+      value: value,
+    );
+  }
+
+  String _normalizeIslandId(
+    String value,
+  ) {
+    final normalized = value
+        .trim()
+        .toLowerCase();
+
+    if (normalized == 'sumatra') {
+      return 'sumatera';
+    }
+
+    return normalized;
+  }
+
+  String get userName => _userName;
+
+  String get avatar => _avatar;
+
+  int get xp => _xp;
+
+  int get maxXp => _maxXp;
+
+  int get levelNumber => _levelNumber;
+
+  String get level => _level;
+
+  String get title => _title;
+
+  List<ProfileStatModel> get topStats {
+    return List<ProfileStatModel>.unmodifiable(
+      _topStats,
+    );
+  }
+
+  List<ProfileStatModel> get bottomStats {
+    return List<ProfileStatModel>.unmodifiable(
+      _bottomStats,
+    );
+  }
+
+  double get xpProgressValue {
+    if (_maxXp <= 0) {
+      return 0;
+    }
+
+    return (_xp / _maxXp).clamp(
+      0.0,
+      1.0,
+    ).toDouble();
+  }
 
   void updateProfile({
     required String userName,
@@ -143,6 +405,15 @@ class UserProfileController extends ChangeNotifier {
   void resetGuestProfile() {
     _userName = 'Guest';
     _avatar = ProfileData.avatar;
+
+    _xp = 0;
+    _maxXp = _maximumXp;
+    _levelNumber = 1;
+
+    _level = 'Level 1';
+    _title = 'Penjelajah Pemula';
+
+    _resetStatistics();
 
     notifyListeners();
   }
