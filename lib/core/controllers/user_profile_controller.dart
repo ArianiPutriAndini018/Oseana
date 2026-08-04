@@ -95,8 +95,8 @@ class UserProfileController extends ChangeNotifier {
         final completedMissions = await MissionRepository().getCompletedMissionIds(user.id);
         final missionIndex = _topStats.indexWhere((s) => s.id == 'missions_done');
         if (missionIndex != -1) {
-          // Total missions available in MissionData is 9
-          _topStats[missionIndex] = _topStats[missionIndex].copyWith(value: '${completedMissions.length}/9');
+          // Total missions available in MissionData is 15
+          _topStats[missionIndex] = _topStats[missionIndex].copyWith(value: '${completedMissions.length}/15');
         }
       } catch (e) {
         print('Error loading missions done: $e');

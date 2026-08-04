@@ -62,7 +62,7 @@ class ProfileData {
     ProfileStatModel(
       id: 'missions_done',
       title: 'Misi Selesai',
-      value: '0/21',
+      value: '0/15',
       iconKey: 'mission',
       iconAsset: AppImages.profileMissionCompleteIcon,
       fallbackIcon: Icons.fact_check_rounded,
