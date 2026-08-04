@@ -33,28 +33,22 @@ class _IslandDetailScreenState
     extends State<IslandDetailScreen> {
   static const int _currentIndex = 1;
 
-  late IslandCheckpointModel
-      _currentCheckpoint;
+  late IslandCheckpointModel _currentCheckpoint;
 
   @override
   void initState() {
     super.initState();
 
-    _currentCheckpoint =
-        widget.checkpoint;
+    _currentCheckpoint = widget.checkpoint;
   }
 
   Future<void> _refreshCheckpoint() async {
-    await CheckpointRepository()
-        .loadAllCheckpoints();
+    await CheckpointRepository().loadAllCheckpoints();
 
     final updated =
-        CheckpointRepository
-            .cachedCheckpoints
-            .firstWhere(
+        CheckpointRepository.cachedCheckpoints.firstWhere(
       (checkpoint) {
-        return checkpoint.id ==
-            _currentCheckpoint.id;
+        return checkpoint.id == _currentCheckpoint.id;
       },
       orElse: () {
         return _currentCheckpoint;
@@ -80,8 +74,7 @@ class _IslandDetailScreenState
         builder: (_) => BiotaDetailScreen(
           checkpoint: _currentCheckpoint,
           biota: biota,
-          learningMode:
-              widget.learningMode,
+          learningMode: widget.learningMode,
         ),
       ),
     );
@@ -97,8 +90,7 @@ class _IslandDetailScreenState
       OceanPageRoute(
         builder: (_) => QuizScreen(
           checkpoint: _currentCheckpoint,
-          learningMode:
-              widget.learningMode,
+          learningMode: widget.learningMode,
         ),
       ),
     );
@@ -116,9 +108,7 @@ class _IslandDetailScreenState
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
       extendBody: true,
@@ -138,7 +128,9 @@ class _IslandDetailScreenState
               );
             },
           ),
+
           const ScreenBackButton(),
+
           FloatingHomeBottomNav(
             currentIndex: _currentIndex,
             onTap: (index) {

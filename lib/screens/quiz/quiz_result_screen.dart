@@ -43,8 +43,7 @@ class QuizResultScreen extends StatelessWidget {
     Navigator.pushReplacement(
       context,
       OceanPageRoute(
-        builder: (_) =>
-            UpdateProgressScreen(
+        builder: (_) => UpdateProgressScreen(
           checkpoint: checkpoint,
         ),
       ),
@@ -75,7 +74,7 @@ class QuizResultScreen extends StatelessWidget {
           learningMode: learningMode,
         ),
       ),
-      (route) => false,
+      (route) => route.isFirst,
     );
   }
 
@@ -86,18 +85,14 @@ class QuizResultScreen extends StatelessWidget {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
-      currentIndex:
-          _bottomNavIndex,
+      currentIndex: _bottomNavIndex,
     );
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          AppColors.primary,
+      backgroundColor: AppColors.primary,
       extendBody: true,
       body: Stack(
         children: [
@@ -127,15 +122,13 @@ class QuizResultScreen extends StatelessWidget {
           ),
 
           QuizResultConfetti(
-            isActive:
-                _isPerfectScore,
+            isActive: _isPerfectScore,
           ),
 
           const ScreenBackButton(),
 
           FloatingHomeBottomNav(
-            currentIndex:
-                _bottomNavIndex,
+            currentIndex: _bottomNavIndex,
             onTap: (index) {
               _onBottomNavTap(
                 context,

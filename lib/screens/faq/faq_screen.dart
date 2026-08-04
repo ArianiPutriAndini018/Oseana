@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_images.dart';
 import '../../core/constants/app_radius.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/routes/app_routes.dart';
@@ -9,11 +10,15 @@ import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 
 class FaqScreen extends StatelessWidget {
-  const FaqScreen({super.key});
+  const FaqScreen({
+    super.key,
+  });
 
   static const int _bottomNavIndex = 4;
 
-  void _handleBack(BuildContext context) {
+  void _handleBack(
+    BuildContext context,
+  ) {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
       return;
@@ -26,7 +31,10 @@ class FaqScreen extends StatelessWidget {
     );
   }
 
-  void _handleBottomNavTap(BuildContext context, int index) {
+  void _handleBottomNavTap(
+    BuildContext context,
+    int index,
+  ) {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
@@ -35,18 +43,48 @@ class FaqScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.primary,
+      extendBody: true,
       body: Stack(
         children: [
-          const _FaqContent(),
-          ScreenBackButton(
-            onPressed: () => _handleBack(context),
+          Positioned.fill(
+            child: Image.asset(
+              AppImages.backgroundSplash,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
           ),
+
+          Positioned.fill(
+            child: ColoredBox(
+              color: Colors.white.withOpacity(
+                0.12,
+              ),
+            ),
+          ),
+
+          const Positioned.fill(
+            child: _FaqContent(),
+          ),
+
+          ScreenBackButton(
+            onPressed: () {
+              _handleBack(context);
+            },
+          ),
+
           FloatingHomeBottomNav(
             currentIndex: _bottomNavIndex,
-            onTap: (index) => _handleBottomNavTap(context, index),
+            onTap: (index) {
+              _handleBottomNavTap(
+                context,
+                index,
+              );
+            },
           ),
         ],
       ),
@@ -86,13 +124,17 @@ class _FaqContent extends StatelessWidget {
     _FaqItemData(
       question: 'Apakah aplikasi ini perlu internet?',
       answer:
-          'Untuk versi awal, beberapa data masih bisa dibuat lokal. Jika nanti sudah terhubung API, internet akan dibutuhkan untuk menyimpan progres pengguna.',
+          'Internet diperlukan untuk mengambil data, menyimpan progres, menjalankan autentikasi, dan menyinkronkan informasi pengguna.',
     ),
   ];
 
   @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
+  Widget build(
+    BuildContext context,
+  ) {
+    final width =
+        MediaQuery.sizeOf(context).width;
+
     final isSmall = width < 380;
 
     return SafeArea(
@@ -105,44 +147,84 @@ class _FaqContent extends StatelessWidget {
           150,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment:
+              CrossAxisAlignment.stretch,
           children: [
             Text(
               'Bantuan & FAQ',
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyLarge.copyWith(
-                color: AppColors.blueDark,
+              style:
+                  AppTextStyles.bodyLarge.copyWith(
+                color: AppColors.white,
                 fontSize: isSmall ? 24 : 28,
                 fontWeight: FontWeight.w900,
                 height: 1,
                 letterSpacing: 0.4,
+                shadows: const [
+                  Shadow(
+                    color: Color(
+                      0x66000000,
+                    ),
+                    blurRadius: 8,
+                    offset: Offset(
+                      0,
+                      2,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: isSmall ? 30 : 36),
+
+            SizedBox(
+              height: isSmall ? 30 : 36,
+            ),
+
             Container(
               padding: EdgeInsets.all(
                 isSmall ? 16 : 20,
               ),
               decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: AppRadius.radiusXXL,
+                color: AppColors.white.withOpacity(
+                  0.96,
+                ),
+                borderRadius:
+                    AppRadius.radiusXXL,
                 border: Border.all(
                   color: AppColors.primary,
                   width: 3.5,
                 ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(
+                      0x29000000,
+                    ),
+                    blurRadius: 18,
+                    offset: Offset(
+                      0,
+                      8,
+                    ),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
-                  for (int index = 0; index < _items.length; index++) ...[
+                  for (
+                    int index = 0;
+                    index < _items.length;
+                    index++
+                  ) ...[
                     _FaqItem(
                       data: _items[index],
                       isSmall: isSmall,
                     ),
-                    if (index != _items.length - 1)
+                    if (index !=
+                        _items.length - 1)
                       const Divider(
                         height: 1,
                         thickness: 1,
-                        color: Color(0xFFDCE8F4),
+                        color: Color(
+                          0xFFDCE8F4,
+                        ),
                       ),
                   ],
                 ],
@@ -165,7 +247,9 @@ class _FaqItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Theme(
       data: Theme.of(context).copyWith(
         dividerColor: Colors.transparent,
@@ -180,10 +264,12 @@ class _FaqItem extends StatelessWidget {
           bottom: isSmall ? 14 : 16,
         ),
         iconColor: AppColors.primary,
-        collapsedIconColor: AppColors.primary,
+        collapsedIconColor:
+            AppColors.primary,
         title: Text(
           data.question,
-          style: AppTextStyles.bodyMedium.copyWith(
+          style:
+              AppTextStyles.bodyMedium.copyWith(
             color: AppColors.primary,
             fontSize: isSmall ? 14 : 16,
             fontWeight: FontWeight.w900,
@@ -193,7 +279,8 @@ class _FaqItem extends StatelessWidget {
         children: [
           Text(
             data.answer,
-            style: AppTextStyles.bodySmall.copyWith(
+            style:
+                AppTextStyles.bodySmall.copyWith(
               color: AppColors.textGrey,
               fontSize: isSmall ? 12 : 13,
               fontWeight: FontWeight.w600,

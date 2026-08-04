@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_images.dart';
 import '../../core/controllers/audio_controller.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/utils/home_bottom_nav_action.dart';
@@ -16,7 +17,9 @@ class SettingsScreen extends StatefulWidget {
   });
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() {
+    return _SettingsScreenState();
+  }
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
@@ -30,8 +33,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
 
-    _isSoundActive = AudioController.instance.isSoundEnabled;
-    _isMusicActive = AudioController.instance.isMusicEnabled;
+    _isSoundActive =
+        AudioController.instance.isSoundEnabled;
+
+    _isMusicActive =
+        AudioController.instance.isMusicEnabled;
   }
 
   void _handleBack() {
@@ -47,7 +53,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _handleBottomNavTap(int index) {
+  void _handleBottomNavTap(
+    int index,
+  ) {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
@@ -55,52 +63,86 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _toggleNotification(bool value) {
+  void _toggleNotification(
+    bool value,
+  ) {
     setState(() {
       _isNotificationActive = value;
     });
   }
 
-  void _toggleSound(bool value) {
+  void _toggleSound(
+    bool value,
+  ) {
     setState(() {
       _isSoundActive = value;
     });
 
-    AudioController.instance.setSoundEnabled(value);
+    AudioController.instance.setSoundEnabled(
+      value,
+    );
   }
 
-  void _toggleMusic(bool value) {
+  void _toggleMusic(
+    bool value,
+  ) {
     setState(() {
       _isMusicActive = value;
     });
 
     unawaited(
-      AudioController.instance.setMusicEnabled(value),
+      AudioController.instance.setMusicEnabled(
+        value,
+      ),
     );
   }
 
   void _handleLanguageTap() {
-    // Bahasa dibiarkan dulu.
+    // Pengaturan bahasa belum diaktifkan.
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.primary,
+      extendBody: true,
       body: Stack(
         children: [
+          Positioned.fill(
+            child: Image.asset(
+              AppImages.backgroundSplash,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
+          ),
+
+          Positioned.fill(
+            child: ColoredBox(
+              color: Colors.white.withOpacity(
+                0.12,
+              ),
+            ),
+          ),
+
           SettingsContent(
-            isNotificationActive: _isNotificationActive,
+            isNotificationActive:
+                _isNotificationActive,
             isSoundActive: _isSoundActive,
             isMusicActive: _isMusicActive,
-            onNotificationChanged: _toggleNotification,
+            onNotificationChanged:
+                _toggleNotification,
             onSoundChanged: _toggleSound,
             onMusicChanged: _toggleMusic,
-            onLanguageTap: _handleLanguageTap,
+            onLanguageTap:
+                _handleLanguageTap,
           ),
+
           ScreenBackButton(
             onPressed: _handleBack,
           ),
+
           FloatingHomeBottomNav(
             currentIndex: _bottomNavIndex,
             onTap: _handleBottomNavTap,

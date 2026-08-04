@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_images.dart';
 import '../../core/constants/app_radius.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/routes/ocean_page_route.dart';
@@ -46,17 +47,14 @@ class _BiotaDetailScreenState
     _markBiotaAsLearned();
   }
 
-  Future<void>
-      _markBiotaAsLearned() async {
-    final user =
-        AuthService().currentUser;
+  Future<void> _markBiotaAsLearned() async {
+    final user = AuthService().currentUser;
 
     if (user == null) {
       return;
     }
 
-    await BiotaRepository()
-        .markBiotaAsLearned(
+    await BiotaRepository().markBiotaAsLearned(
       user.id,
       widget.biota.id,
     );
@@ -71,9 +69,7 @@ class _BiotaDetailScreenState
   }
 
   void _onVideoPressed() {
-    if (widget.biota.videoUrl
-        .trim()
-        .isEmpty) {
+    if (widget.biota.videoUrl.trim().isEmpty) {
       _showSnackBar(
         'Video biota belum tersedia',
       );
@@ -86,17 +82,14 @@ class _BiotaDetailScreenState
         builder: (_) => BiotaVideoScreen(
           checkpoint: widget.checkpoint,
           biota: widget.biota,
-          learningMode:
-              widget.learningMode,
+          learningMode: widget.learningMode,
         ),
       ),
     );
   }
 
   void _onLearnOtherPressed() {
-    Navigator.pop(
-      context,
-    );
+    Navigator.pop(context);
   }
 
   void _onBottomNavTap(
@@ -140,48 +133,53 @@ class _BiotaDetailScreenState
         SnackBar(
           content: Text(
             message,
-            style:
-                AppTextStyles.bodySmall
-                    .copyWith(
+            style: AppTextStyles.bodySmall.copyWith(
               color: AppColors.white,
-              fontWeight:
-                  FontWeight.w600,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          backgroundColor:
-              AppColors.primary,
-          behavior:
-              SnackBarBehavior.floating,
-          shape:
-              const RoundedRectangleBorder(
-            borderRadius:
-                AppRadius.radiusLG,
+          backgroundColor: AppColors.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.radiusLG,
           ),
         ),
       );
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.primary,
       extendBody: true,
       body: Stack(
         children: [
+          Positioned.fill(
+            child: Image.asset(
+              AppImages.backgroundSplash,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
+          ),
+
+          Positioned.fill(
+            child: ColoredBox(
+              color: Colors.white.withOpacity(
+                0.12,
+              ),
+            ),
+          ),
+
           BiotaDetailContent(
             biota: widget.biota,
-            selectedType:
-                _selectedType,
-            onTypeChanged:
-                _onTypeChanged,
-            onVideoPressed:
-                _onVideoPressed,
-            onLearnOtherPressed:
-                _onLearnOtherPressed,
+            selectedType: _selectedType,
+            onTypeChanged: _onTypeChanged,
+            onVideoPressed: _onVideoPressed,
+            onLearnOtherPressed: _onLearnOtherPressed,
           ),
+
           const ScreenBackButton(),
+
           FloatingHomeBottomNav(
             currentIndex: _currentIndex,
             onTap: _onBottomNavTap,

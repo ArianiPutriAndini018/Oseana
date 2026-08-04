@@ -75,7 +75,8 @@ class IslandCheckpointContent extends StatelessWidget {
             ),
             const SizedBox(height: 26),
 
-            // Hanya ditampilkan pada Aquarium Mode.
+            // Aquarium Mode:
+            // hanya menampilkan Scan QR dan kode manual.
             if (isAquariumMode) ...[
               PrimaryButton(
                 text: checkpoint.scanButtonText,
@@ -98,7 +99,8 @@ class IslandCheckpointContent extends StatelessWidget {
               ),
             ],
 
-            // Hanya ditampilkan pada Explore Mode.
+            // Explore Mode:
+            // hanya menampilkan tombol Pelajari.
             if (!isAquariumMode) ...[
               PrimaryButton(
                 text: 'Pelajari',

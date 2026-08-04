@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_images.dart';
 import '../../core/constants/app_radius.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/routes/app_routes.dart';
@@ -9,11 +10,15 @@ import '../../widgets/navigation/floating_home_bottom_nav.dart';
 import '../../widgets/navigation/screen_back_button.dart';
 
 class AboutOseanaScreen extends StatelessWidget {
-  const AboutOseanaScreen({super.key});
+  const AboutOseanaScreen({
+    super.key,
+  });
 
   static const int _bottomNavIndex = 4;
 
-  void _handleBack(BuildContext context) {
+  void _handleBack(
+    BuildContext context,
+  ) {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
       return;
@@ -26,7 +31,10 @@ class AboutOseanaScreen extends StatelessWidget {
     );
   }
 
-  void _handleBottomNavTap(BuildContext context, int index) {
+  void _handleBottomNavTap(
+    BuildContext context,
+    int index,
+  ) {
     HomeBottomNavAction.handle(
       context: context,
       index: index,
@@ -35,18 +43,48 @@ class AboutOseanaScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.primary,
+      extendBody: true,
       body: Stack(
         children: [
-          const _AboutContent(),
-          ScreenBackButton(
-            onPressed: () => _handleBack(context),
+          Positioned.fill(
+            child: Image.asset(
+              AppImages.backgroundSplash,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
           ),
+
+          Positioned.fill(
+            child: ColoredBox(
+              color: Colors.white.withOpacity(
+                0.12,
+              ),
+            ),
+          ),
+
+          const Positioned.fill(
+            child: _AboutContent(),
+          ),
+
+          ScreenBackButton(
+            onPressed: () {
+              _handleBack(context);
+            },
+          ),
+
           FloatingHomeBottomNav(
             currentIndex: _bottomNavIndex,
-            onTap: (index) => _handleBottomNavTap(context, index),
+            onTap: (index) {
+              _handleBottomNavTap(
+                context,
+                index,
+              );
+            },
           ),
         ],
       ),
@@ -58,8 +96,12 @@ class _AboutContent extends StatelessWidget {
   const _AboutContent();
 
   @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
+  Widget build(
+    BuildContext context,
+  ) {
+    final width =
+        MediaQuery.sizeOf(context).width;
+
     final isSmall = width < 380;
 
     return SafeArea(
@@ -72,20 +114,38 @@ class _AboutContent extends StatelessWidget {
           150,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment:
+              CrossAxisAlignment.stretch,
           children: [
             Text(
               'Tentang Oseana Quest',
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyLarge.copyWith(
-                color: AppColors.blueDark,
+              style:
+                  AppTextStyles.bodyLarge.copyWith(
+                color: AppColors.white,
                 fontSize: isSmall ? 22 : 26,
                 fontWeight: FontWeight.w900,
                 height: 1.1,
                 letterSpacing: 0.3,
+                shadows: const [
+                  Shadow(
+                    color: Color(
+                      0x66000000,
+                    ),
+                    blurRadius: 8,
+                    offset: Offset(
+                      0,
+                      2,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: isSmall ? 30 : 36),
+
+            SizedBox(
+              height: isSmall ? 30 : 36,
+            ),
+
             Container(
               padding: EdgeInsets.fromLTRB(
                 isSmall ? 18 : 22,
@@ -94,15 +154,31 @@ class _AboutContent extends StatelessWidget {
                 isSmall ? 22 : 26,
               ),
               decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: AppRadius.radiusXXL,
+                color: AppColors.white.withOpacity(
+                  0.96,
+                ),
+                borderRadius:
+                    AppRadius.radiusXXL,
                 border: Border.all(
                   color: AppColors.primary,
                   width: 3.5,
                 ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(
+                      0x29000000,
+                    ),
+                    blurRadius: 18,
+                    offset: Offset(
+                      0,
+                      8,
+                    ),
+                  ),
+                ],
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment:
+                    CrossAxisAlignment.stretch,
                 children: [
                   _AboutSection(
                     icon: Icons.waves_rounded,
@@ -111,7 +187,11 @@ class _AboutContent extends StatelessWidget {
                         'Oseana Quest adalah aplikasi edukasi laut Indonesia yang mengajak pengguna belajar melalui peta pulau, biota laut, kuis, misi, dan Sea Passport.',
                     isSmall: isSmall,
                   ),
-                  SizedBox(height: isSmall ? 20 : 24),
+
+                  SizedBox(
+                    height: isSmall ? 20 : 24,
+                  ),
+
                   _AboutSection(
                     icon: Icons.flag_rounded,
                     title: 'Tujuan Aplikasi',
@@ -119,7 +199,11 @@ class _AboutContent extends StatelessWidget {
                         'Aplikasi ini dibuat untuk membantu pengguna mengenal kekayaan biota laut Indonesia dengan cara yang lebih interaktif dan menyenangkan.',
                     isSmall: isSmall,
                   ),
-                  SizedBox(height: isSmall ? 20 : 24),
+
+                  SizedBox(
+                    height: isSmall ? 20 : 24,
+                  ),
+
                   _AboutSection(
                     icon: Icons.public_rounded,
                     title: 'Fokus SDGs 14',
@@ -127,7 +211,11 @@ class _AboutContent extends StatelessWidget {
                         'Oseana Quest mendukung pembelajaran tentang kehidupan bawah laut melalui tema konservasi, kepedulian lingkungan, dan eksplorasi biota laut.',
                     isSmall: isSmall,
                   ),
-                  SizedBox(height: isSmall ? 20 : 24),
+
+                  SizedBox(
+                    height: isSmall ? 20 : 24,
+                  ),
+
                   _AboutInfoBox(
                     isSmall: isSmall,
                   ),
@@ -155,15 +243,20 @@ class _AboutSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          CrossAxisAlignment.start,
       children: [
         Container(
           width: isSmall ? 42 : 48,
           height: isSmall ? 42 : 48,
           decoration: const BoxDecoration(
-            color: Color(0xFFEAF5FF),
+            color: Color(
+              0xFFEAF5FF,
+            ),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -172,24 +265,35 @@ class _AboutSection extends StatelessWidget {
             size: isSmall ? 24 : 28,
           ),
         ),
-        SizedBox(width: isSmall ? 12 : 14),
+
+        SizedBox(
+          width: isSmall ? 12 : 14,
+        ),
+
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: AppTextStyles.bodyMedium.copyWith(
+                style: AppTextStyles.bodyMedium
+                    .copyWith(
                   color: AppColors.primary,
                   fontSize: isSmall ? 15 : 17,
                   fontWeight: FontWeight.w900,
                   height: 1,
                 ),
               ),
-              SizedBox(height: isSmall ? 8 : 10),
+
+              SizedBox(
+                height: isSmall ? 8 : 10,
+              ),
+
               Text(
                 body,
-                style: AppTextStyles.bodySmall.copyWith(
+                style:
+                    AppTextStyles.bodySmall.copyWith(
                   color: AppColors.textGrey,
                   fontSize: isSmall ? 12 : 13,
                   fontWeight: FontWeight.w600,
@@ -212,16 +316,25 @@ class _AboutInfoBox extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Container(
       padding: EdgeInsets.all(
         isSmall ? 14 : 16,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4FAFF),
-        borderRadius: BorderRadius.circular(18),
+        color: const Color(
+          0xFFF4FAFF,
+        ),
+        borderRadius:
+            BorderRadius.circular(
+          18,
+        ),
         border: Border.all(
-          color: const Color(0xFFDCE8F4),
+          color: const Color(
+            0xFFDCE8F4,
+          ),
           width: 1.5,
         ),
       ),
@@ -232,16 +345,25 @@ class _AboutInfoBox extends StatelessWidget {
             value: '1.0.0',
             isSmall: isSmall,
           ),
-          SizedBox(height: isSmall ? 10 : 12),
+
+          SizedBox(
+            height: isSmall ? 10 : 12,
+          ),
+
           _InfoRow(
             label: 'Platform',
             value: 'Mobile App',
             isSmall: isSmall,
           ),
-          SizedBox(height: isSmall ? 10 : 12),
+
+          SizedBox(
+            height: isSmall ? 10 : 12,
+          ),
+
           _InfoRow(
             label: 'Tema',
-            value: 'Edukasi Laut Indonesia',
+            value:
+                'Edukasi Laut Indonesia',
             isSmall: isSmall,
           ),
         ],
@@ -262,26 +384,35 @@ class _InfoRow extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Row(
       children: [
         Text(
           label,
-          style: AppTextStyles.bodySmall.copyWith(
+          style:
+              AppTextStyles.bodySmall.copyWith(
             color: AppColors.textGrey,
             fontSize: isSmall ? 12 : 13,
             fontWeight: FontWeight.w700,
             height: 1,
           ),
         ),
+
         const Spacer(),
-        Text(
-          value,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: AppColors.primary,
-            fontSize: isSmall ? 12 : 13,
-            fontWeight: FontWeight.w900,
-            height: 1,
+
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            style:
+                AppTextStyles.bodySmall.copyWith(
+              color: AppColors.primary,
+              fontSize: isSmall ? 12 : 13,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
           ),
         ),
       ],

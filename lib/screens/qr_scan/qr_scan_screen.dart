@@ -28,32 +28,29 @@ class QrScanScreen extends StatefulWidget {
   }
 }
 
-class _QrScanScreenState
-    extends State<QrScanScreen> {
+class _QrScanScreenState extends State<QrScanScreen> {
   static const int _currentIndex = 1;
 
-  late final MobileScannerController
-      _scannerController;
-
-  late final TextEditingController
-      _manualCodeController;
+  late final MobileScannerController _scannerController;
+  late final TextEditingController _manualCodeController;
 
   bool _isHandlingCode = false;
+
+  bool get _isAquariumMode {
+    return widget.learningMode == LearningModeType.aquarium;
+  }
 
   @override
   void initState() {
     super.initState();
 
-    _manualCodeController =
-        TextEditingController();
+    _manualCodeController = TextEditingController();
 
-    _scannerController =
-        MobileScannerController(
+    _scannerController = MobileScannerController(
       formats: const [
         BarcodeFormat.qrCode,
       ],
-      detectionSpeed:
-          DetectionSpeed.normal,
+      detectionSpeed: DetectionSpeed.normal,
       detectionTimeoutMs: 100,
     );
   }
@@ -69,6 +66,10 @@ class _QrScanScreenState
   void _onQrDetected(
     BarcodeCapture capture,
   ) {
+    if (!_isAquariumMode) {
+      return;
+    }
+
     if (_isHandlingCode) {
       return;
     }
@@ -77,8 +78,7 @@ class _QrScanScreenState
       return;
     }
 
-    for (final barcode
-        in capture.barcodes) {
+    for (final barcode in capture.barcodes) {
       final qrValue =
           barcode.rawValue?.trim();
 
@@ -88,7 +88,7 @@ class _QrScanScreenState
       }
 
       debugPrint(
-        'QR terbaca: $qrValue',
+        'QR Pulau ${widget.checkpoint.title} terbaca: $qrValue',
       );
 
       _handleCode(
@@ -102,18 +102,35 @@ class _QrScanScreenState
   Future<void> _handleCode(
     String value,
   ) async {
+    if (!_isAquariumMode) {
+      _showSnackBar(
+        'Scan QR hanya tersedia pada Aquarium Mode',
+        AppColors.warning,
+      );
+      return;
+    }
+
     if (_isHandlingCode) {
       return;
     }
 
-    final inputCode =
-        value.trim().toUpperCase();
+    final inputCode = value
+        .trim()
+        .toUpperCase();
 
     final validCode = widget
         .checkpoint
         .checkpointCode
         .trim()
         .toUpperCase();
+
+    if (validCode.isEmpty) {
+      _showSnackBar(
+        'Kode checkpoint ${widget.checkpoint.title} belum tersedia',
+        AppColors.warning,
+      );
+      return;
+    }
 
     if (inputCode.isEmpty) {
       _showSnackBar(
@@ -129,7 +146,7 @@ class _QrScanScreenState
 
     if (inputCode != validCode) {
       _showSnackBar(
-        'QR atau kode manual tidak valid',
+        'QR atau kode tidak sesuai dengan ${widget.checkpoint.title}',
         AppColors.error,
       );
 
@@ -155,6 +172,8 @@ class _QrScanScreenState
     if (!mounted) {
       return;
     }
+
+    _manualCodeController.clear();
 
     Navigator.pushReplacement(
       context,
@@ -199,9 +218,7 @@ class _QrScanScreenState
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
       extendBody: true,
@@ -209,19 +226,16 @@ class _QrScanScreenState
         children: [
           QrScanContent(
             checkpoint: widget.checkpoint,
-            scannerController:
-                _scannerController,
-            manualCodeController:
-                _manualCodeController,
-            isHandlingCode:
-                _isHandlingCode,
+            scannerController: _scannerController,
+            manualCodeController: _manualCodeController,
+            isHandlingCode: _isHandlingCode,
             onQrDetected: _onQrDetected,
-            onManualCodeSubmitted:
-                _handleCode,
-            onOpenPressed:
-                _onOpenPressed,
+            onManualCodeSubmitted: _handleCode,
+            onOpenPressed: _onOpenPressed,
           ),
+
           const ScreenBackButton(),
+
           FloatingHomeBottomNav(
             currentIndex: _currentIndex,
             onTap: _onBottomNavTap,

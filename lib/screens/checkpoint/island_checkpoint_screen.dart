@@ -37,8 +37,7 @@ class _IslandCheckpointScreenState
   late final TextEditingController _manualCodeController;
 
   bool get _isAquariumMode {
-    return widget.learningMode ==
-        LearningModeType.aquarium;
+    return widget.learningMode == LearningModeType.aquarium;
   }
 
   IslandCheckpointModel get _checkpoint {
@@ -51,8 +50,7 @@ class _IslandCheckpointScreenState
   void initState() {
     super.initState();
 
-    _manualCodeController =
-        TextEditingController();
+    _manualCodeController = TextEditingController();
 
     if (widget.island.stars == 3) {
       CheckpointData.updateProgress(
@@ -68,17 +66,7 @@ class _IslandCheckpointScreenState
     super.dispose();
   }
 
-  void _onLearnPressed() {
-    // Pengaman agar Aquarium Mode
-    // tidak bisa melewati QR.
-    if (_isAquariumMode) {
-      _showSnackBar(
-        'Scan QR atau masukkan kode terlebih dahulu',
-        AppColors.warning,
-      );
-      return;
-    }
-
+  void _openIslandDetail() {
     Navigator.push(
       context,
       OceanPageRoute(
@@ -90,7 +78,42 @@ class _IslandCheckpointScreenState
     );
   }
 
+  void _onLearnPressed() {
+    // Pengaman:
+    // Aquarium Mode tidak boleh langsung belajar.
+    if (_isAquariumMode) {
+      _showSnackBar(
+        'Scan QR atau masukkan kode terlebih dahulu',
+        AppColors.warning,
+      );
+      return;
+    }
+
+    _openIslandDetail();
+  }
+
   void _onScanQrPressed() {
+    // Pengaman:
+    // Explore Mode tidak boleh membuka scanner.
+    if (!_isAquariumMode) {
+      _showSnackBar(
+        'Scan QR hanya tersedia pada Aquarium Mode',
+        AppColors.warning,
+      );
+      return;
+    }
+
+    final checkpointCode =
+        _checkpoint.checkpointCode.trim();
+
+    if (checkpointCode.isEmpty) {
+      _showSnackBar(
+        'Kode checkpoint Pulau ${widget.island.name} belum tersedia',
+        AppColors.warning,
+      );
+      return;
+    }
+
     Navigator.push(
       context,
       OceanPageRoute(
@@ -105,13 +128,31 @@ class _IslandCheckpointScreenState
   void _handleManualCodeSubmit(
     String value,
   ) {
-    final inputCode =
-        value.trim().toUpperCase();
+    // Explore Mode tidak dapat memakai kode manual.
+    if (!_isAquariumMode) {
+      _showSnackBar(
+        'Kode manual hanya tersedia pada Aquarium Mode',
+        AppColors.warning,
+      );
+      return;
+    }
+
+    final inputCode = value
+        .trim()
+        .toUpperCase();
 
     final validCode = _checkpoint
         .checkpointCode
         .trim()
         .toUpperCase();
+
+    if (validCode.isEmpty) {
+      _showSnackBar(
+        'Kode checkpoint Pulau ${widget.island.name} belum tersedia',
+        AppColors.warning,
+      );
+      return;
+    }
 
     if (inputCode.isEmpty) {
       _showSnackBar(
@@ -123,26 +164,20 @@ class _IslandCheckpointScreenState
 
     if (inputCode != validCode) {
       _showSnackBar(
-        'Kode tidak valid',
+        'Kode tidak sesuai dengan Pulau ${widget.island.name}',
         AppColors.error,
       );
       return;
     }
 
+    _manualCodeController.clear();
+
     _showSnackBar(
-      'Kode valid',
+      'Kode Pulau ${widget.island.name} berhasil diverifikasi',
       AppColors.success,
     );
 
-    Navigator.push(
-      context,
-      OceanPageRoute(
-        builder: (_) => IslandDetailScreen(
-          checkpoint: _checkpoint,
-          learningMode: widget.learningMode,
-        ),
-      ),
-    );
+    _openIslandDetail();
   }
 
   void _onBottomNavTap(
@@ -171,9 +206,7 @@ class _IslandCheckpointScreenState
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
       extendBody: true,
@@ -182,14 +215,14 @@ class _IslandCheckpointScreenState
           IslandCheckpointContent(
             checkpoint: _checkpoint,
             isAquariumMode: _isAquariumMode,
-            manualCodeController:
-                _manualCodeController,
+            manualCodeController: _manualCodeController,
             onLearnPressed: _onLearnPressed,
             onScanQrPressed: _onScanQrPressed,
-            onManualCodeSubmitted:
-                _handleManualCodeSubmit,
+            onManualCodeSubmitted: _handleManualCodeSubmit,
           ),
+
           const ScreenBackButton(),
+
           FloatingHomeBottomNav(
             currentIndex: _currentIndex,
             onTap: _onBottomNavTap,

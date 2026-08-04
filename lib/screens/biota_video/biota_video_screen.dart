@@ -37,8 +37,7 @@ class _BiotaVideoScreenState
     extends State<BiotaVideoScreen> {
   static const int _currentIndex = 1;
 
-  YoutubePlayerController?
-      _youtubeController;
+  YoutubePlayerController? _youtubeController;
 
   bool get _hasVideo {
     return _youtubeController != null;
@@ -52,8 +51,7 @@ class _BiotaVideoScreenState
   }
 
   void _initializeYoutubePlayer() {
-    final videoId =
-        YoutubeVideoIdHelper.resolve(
+    final videoId = YoutubeVideoIdHelper.resolve(
       widget.biota.videoUrl,
     );
 
@@ -65,8 +63,7 @@ class _BiotaVideoScreenState
         YoutubePlayerController.fromVideoId(
       videoId: videoId,
       autoPlay: false,
-      params:
-          const YoutubePlayerParams(
+      params: const YoutubePlayerParams(
         mute: false,
         enableCaption: true,
         showControls: true,
@@ -96,9 +93,7 @@ class _BiotaVideoScreenState
   }
 
   void _onLearnOtherPressed() {
-    Navigator.pop(
-      context,
-    );
+    Navigator.pop(context);
   }
 
   void _onQuizPressed() {
@@ -107,8 +102,7 @@ class _BiotaVideoScreenState
       OceanPageRoute(
         builder: (_) => QuizScreen(
           checkpoint: widget.checkpoint,
-          learningMode:
-              widget.learningMode,
+          learningMode: widget.learningMode,
         ),
       ),
     );
@@ -138,27 +132,24 @@ class _BiotaVideoScreenState
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,
       extendBody: true,
       body: Stack(
         children: [
           const AnimatedSplashBackground(),
+
           BiotaVideoContent(
             biota: widget.biota,
-            youtubeController:
-                _youtubeController,
-            onWatchVideoPressed:
-                _onWatchVideoPressed,
-            onLearnOtherPressed:
-                _onLearnOtherPressed,
-            onQuizPressed:
-                _onQuizPressed,
+            youtubeController: _youtubeController,
+            onWatchVideoPressed: _onWatchVideoPressed,
+            onLearnOtherPressed: _onLearnOtherPressed,
+            onQuizPressed: _onQuizPressed,
           ),
+
           const ScreenBackButton(),
+
           FloatingHomeBottomNav(
             currentIndex: _currentIndex,
             onTap: _onBottomNavTap,
